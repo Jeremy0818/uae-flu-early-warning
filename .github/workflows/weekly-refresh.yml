@@ -1,0 +1,59 @@
+# Weekly refresh: pull new WHO FluNet + Open-Meteo data, rebuild, re-run the back-test, deploy to Firebase Hosting.
+#
+# Setup (once, after pushing this repo to GitHub):
+#   1. Repo Settings > Secrets and variables > Actions:
+#        secret   FIREBASE_SERVICE_ACCOUNT  (JSON key; `firebase init hosting:github` creates it for you)
+#        variable FIREBASE_PROJECT_ID       (e.g. uae-flu-ewarn)
+#   2. Actions tab > Weekly data refresh > Run workflow, to test it once by hand.
+#
+# Google Trends cannot be pulled from CI (no open API). Run scripts/trends_pull.js in your browser and
+# commit the result with `python scripts/refresh.py --trends <file> --publish`; until then the search
+# signal ages and the dashboard header flags it as late.
+name: Weekly data refresh
+
+on:
+  schedule:
+    - cron: "0 6 * * 2"   # Tuesdays 06:00 UTC (10:00 Gulf time); FluNet's UAE delay varies, the model allows for it
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    # opt-in: does nothing until the FIREBASE_PROJECT_ID repository variable is set (see setup above)
+    if: ${{ vars.FIREBASE_PROJECT_ID != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Fetch, rebuild, back-test, publish
+        run: python scripts/refresh.py --publish
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data/raw data/interim data/processed outputs/backtest_summary.json dashboard/data.js dashboard/version.json
+          git diff --cached --quiet || git commit -m "Weekly data refresh $(date -u +%F)"
+          git push
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          channelId: live

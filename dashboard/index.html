@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Respiratory Early Warning</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2; --surface: #fcfcfb; --surface-2: #f0efec; --border: #e2e0da;
+  --text: #0b0b0b; --text-2: #52514e; --muted: #7a7974;
+  --accent: #2a78d6; --accent-soft: #cde2fb;
+  --series-lab: #2a78d6; --series-now: #eb6834; --series-search: #6250d6;
+  --grid: #e7e5e0; --band: rgba(235,104,52,.16);
+  --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
+  --lvl-normal-bg: #e6f4e6; --lvl-watch-bg: #fff3d6; --lvl-warning-bg: #fbe3e3;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #33332f;
+    --text: #f0efec; --text-2: #c3c2b7; --muted: #8f8e86;
+    --accent: #3987e5; --accent-soft: #1c3557;
+    --series-lab: #3987e5; --series-now: #d95926; --series-search: #9085e9;
+    --grid: #2b2b28; --band: rgba(217,89,38,.22);
+    --lvl-normal-bg: #142a14; --lvl-watch-bg: #33290f; --lvl-warning-bg: #3a1a1a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --surface-2: #232321; --border: #33332f;
+  --text: #f0efec; --text-2: #c3c2b7; --muted: #8f8e86;
+  --accent: #3987e5; --accent-soft: #1c3557;
+  --series-lab: #3987e5; --series-now: #d95926; --series-search: #9085e9;
+  --grid: #2b2b28; --band: rgba(217,89,38,.22);
+  --lvl-normal-bg: #142a14; --lvl-watch-bg: #33290f; --lvl-warning-bg: #3a1a1a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5; }
+.bar { max-width: 1240px; margin: 0 auto; padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+.brand { font-weight: 650; font-size: 16px; letter-spacing: -.01em; }
+.brand small { display: block; font-weight: 400; color: var(--text-2); font-size: 12px; }
+.brand small.fresh { margin-top: 2px; font-variant-numeric: tabular-nums; }
+.brand small.fresh.late { color: var(--critical); font-weight: 600; }
+.spacer { flex: 1; }
+.chk { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--text-2); }
+.chk button { font-size: 13px; padding: 4px 10px; }
+.chk button:disabled { opacity: .6; cursor: progress; }
+.upd { max-width: 1240px; margin: 0 auto; padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center;
+  background: var(--accent-soft); color: var(--text); font-size: 13px; font-weight: 600; }
+.upd[hidden], .chk[hidden] { display: none; }
+@media (max-width: 640px) { header { position: static; } }   /* the tall wrapped header would cover a third of a phone screen */
+label.ctl { display: flex; gap: 8px; align-items: center; color: var(--text-2); font-size: 13px; }
+select, button { font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; }
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+nav.tabs { max-width: 1240px; margin: 0 auto; padding: 0 16px; display: flex; gap: 4px; overflow-x: auto; }
+nav.tabs button { border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; padding: 10px 12px; color: var(--text-2); white-space: nowrap; }
+nav.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+main { max-width: 1240px; margin: 0 auto; padding: 16px; }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.grid { display: grid; gap: 16px; }
+.g3 { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1.2fr); }
+.hero { grid-template-columns: minmax(270px, 340px) minmax(0, 1fr); align-items: start; }
+.chart-label { font-size: 12px; color: var(--text-2); margin: 12px 0 4px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.gauge { margin: 4px 0 12px; }
+.range { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 0 0 10px; }
+.seg { display: inline-flex; flex-wrap: wrap; }
+.seg button { border-radius: 0; margin-left: -1px; padding: 4px 10px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.seg button:first-child { border-radius: 8px 0 0 8px; margin-left: 0; }
+.seg button:last-child { border-radius: 0 8px 8px 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; position: relative; }
+label.dt { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--text-2); }
+label.dt input { font: inherit; font-size: 13px; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 3px 6px; }
+.hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
+#tl { cursor: crosshair; touch-action: pan-y; }
+.erow { display: grid; grid-template-columns: minmax(96px, 1.1fr) minmax(70px, 1.4fr) 48px minmax(90px, 1.2fr); gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--grid); }
+.erow:last-child { border-bottom: 0; }
+.erow .nm { font-weight: 600; font-size: 13px; }
+.erow .lv { text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; color: var(--text-2); }
+.erow .ch { display: flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; }
+.erow .ch .dbar { flex: 1; grid-column: auto; }
+.erow.off { color: var(--muted); }
+.erow.off .why { grid-column: 2 / -1; font-size: 12px; }
+.erow svg { width: 100%; height: 28px; }
+#actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 24px; }
+#actions .note { grid-column: 1 / -1; }
+.gauge text { font-size: 11px; }
+.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 980px) { .g3, .g4, .g2, .hero { grid-template-columns: minmax(0, 1fr); } }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-2); margin: 0 0 10px; font-weight: 600; }
+h3 { font-size: 15px; margin: 0 0 8px; }
+p { margin: 0 0 8px; }
+.muted { color: var(--muted); }
+.sub { color: var(--text-2); font-size: 13px; }
+.replay { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 16px; }
+.replay input[type=range] { flex: 1 1 260px; accent-color: var(--accent); }
+.wk { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 150px; }
+.level { border-radius: 12px; padding: 14px; margin-bottom: 12px; display: flex; gap: 12px; align-items: center; }
+.level.NORMAL { background: var(--lvl-normal-bg); } .level.WATCH { background: var(--lvl-watch-bg); } .level.WARNING { background: var(--lvl-warning-bg); }
+.level .icon { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; flex: none; font-size: 18px; }
+.NORMAL .icon { background: var(--good); } .WATCH .icon { background: var(--warning); color: #3a2a00; } .WARNING .icon { background: var(--critical); }
+.level .name { font-size: 20px; font-weight: 700; letter-spacing: .02em; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 13px; }
+.kv dt { color: var(--text-2); } .kv dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 600; }
+.big { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.banner { border: 1px dashed var(--serious); background: var(--surface-2); border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-bottom: 10px; }
+.driver { display: grid; grid-template-columns: 1fr 64px; gap: 4px 10px; align-items: start; padding: 8px 0; border-bottom: 1px solid var(--grid); }
+.driver:last-child { border-bottom: 0; }
+.driver .lbl { font-weight: 600; font-size: 13px; }
+.driver .txt { color: var(--text-2); font-size: 12px; }
+.driver .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; }
+.dbar { grid-column: 1 / -1; position: relative; height: 12px; background: var(--surface-2); border-radius: 6px; }
+.dbar .mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--muted); }
+.dbar .fill { position: absolute; top: 2px; height: 8px; border-radius: 4px; }
+.action { padding: 10px 0; border-bottom: 1px solid var(--grid); }
+.action:last-child { border-bottom: 0; }
+.action .who { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); font-weight: 700; }
+.action .what { font-weight: 600; }
+.action .why { color: var(--text-2); font-size: 12px; }
+.chart-wrap { position: relative; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+.axis text { fill: var(--muted); font-size: 11px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--text-2); margin: 4px 0 8px; }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.12); min-width: 180px; display: none; z-index: 3; }
+.tip b { font-variant-numeric: tabular-nums; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { color: var(--text-2); font-weight: 600; font-size: 12px; }
+tr.hl td { background: var(--accent-soft); }
+.scroll { overflow-x: auto; }
+.stat .num { font-size: 30px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.stat .cap { color: var(--text-2); font-size: 13px; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+.pill.NORMAL { background: var(--lvl-normal-bg); color: var(--good); } .pill.WATCH { background: var(--lvl-watch-bg); color: #9a6a00; } .pill.WARNING { background: var(--lvl-warning-bg); color: var(--critical); }
+:root[data-theme="dark"] .pill.WATCH { color: var(--warning); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pill.WATCH { color: var(--warning); } }
+ul.clean { margin: 0; padding-left: 18px; } ul.clean li { margin: 4px 0; }
+.hidden { display: none !important; }
+.note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+footer { max-width: 1240px; margin: 0 auto; padding: 8px 16px 32px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand">Respiratory Early Warning · Abu Dhabi / UAE<small>Influenza nowcast from UAE national lab data, emirate search signals and seasonality. Public, aggregated data only.</small><small id="fresh" class="fresh"></small></div>
+    <div class="spacer"></div>
+    <label class="ctl">View as
+      <select id="role">
+        <option value="surv">Surveillance officer (full)</option>
+        <option value="ops">Hospital &amp; clinic operations</option>
+        <option value="comm">Schools &amp; community</option>
+      </select>
+    </label>
+    <label class="ctl"><input type="checkbox" id="outage"> Simulate search-feed outage</label>
+    <div class="chk" id="chkWrap"><button type="button" id="chk" title="Checks whether a newer weekly refresh has been published. The page also checks every 15 minutes while open.">Check for new data</button><span id="chkMsg" aria-live="polite"></span></div>
+  </div>
+  <div class="upd" id="updBar" hidden role="status"><span id="updText"></span><button type="button" class="primary" id="updGo">Load new data</button></div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="situation" aria-selected="true">Situation &amp; replay</button>
+    <button role="tab" data-tab="backtest" aria-selected="false">Back-test evidence</button>
+    <button role="tab" data-tab="governance" aria-selected="false">Governance &amp; method</button>
+  </nav>
+</header>
+
+<main>
+<!-- ================= SITUATION ================= -->
+<section id="tab-situation">
+  <div class="panel replay">
+    <button id="play" class="primary" title="Replay the season week by week">▶ Replay</button>
+    <button id="latest">Latest week</button>
+    <span class="wk" id="wkLabel"></span>
+    <input type="range" id="slider" min="0" max="0" value="0" aria-label="Decision week">
+    <label class="ctl"><input type="checkbox" id="hindsight"> Show what happened next</label>
+  </div>
+
+  <div class="grid hero">
+    <div class="panel status">
+      <h2>Alert status</h2>
+      <div id="levelBox" class="level"><div class="icon" id="levelIcon"></div><div><div class="name" id="levelName"></div><div class="sub" id="levelSub"></div></div></div>
+      <div id="modeBanner" class="banner hidden"></div>
+      <div id="numbers"></div>
+    </div>
+    <div class="panel">
+      <h2>Influenza test positivity · United Arab Emirates (national, WHO FluNet sentinel)</h2>
+      <div class="range" role="group" aria-label="Chart date range">
+        <div class="seg" id="rPresets">
+          <button type="button" data-span="52">1Y</button><button type="button" data-span="104">2Y</button><button type="button" data-all="1">All</button>
+        </div>
+        <div class="seg" id="rYears"></div>
+        <label class="dt">From <input type="date" id="rFrom"></label>
+        <label class="dt">To <input type="date" id="rTo"></label>
+        <div class="seg">
+          <button type="button" id="zIn" title="Zoom in" aria-label="Zoom in">+</button><button type="button" id="zOut" title="Zoom out" aria-label="Zoom out">−</button><button type="button" id="zReset" title="Back to the default view">Reset</button>
+        </div>
+      </div>
+      <div class="legend" id="tlLegend"></div>
+      <div class="chart-wrap" id="tlWrap"><svg id="tl" viewBox="0 0 1000 340" role="img" aria-label="Positivity timeline"></svg><div class="tip" id="tip"></div></div>
+      <div class="hint" id="rangeHint">Drag across the chart to zoom into a period. Double-click the chart to reset.</div>
+      <div class="chart-label">Alert level issued each week <span class="pill NORMAL">NORMAL</span> <span class="pill WATCH">WATCH</span> <span class="pill WARNING">WARNING</span></div>
+      <svg id="strip" viewBox="0 0 1000 26" preserveAspectRatio="none" aria-label="Alert levels"></svg>
+      <div class="chart-label">Influenza search interest · Abu Dhabi emirate (Google Trends index 0–100)</div>
+      <div class="chart-wrap"><svg id="sc" viewBox="0 0 1000 110" role="img" aria-label="Search interest"></svg></div>
+      <div class="note"><span id="tlNote"></span> Search is on its own scale, not overlaid on positivity; the model uses only its change over the lab-reporting gap.</div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel">
+      <h2>Why: signal contributions to this week's estimate</h2>
+      <div class="sub" id="anchorTxt"></div>
+      <div id="drivers"></div>
+      <div class="note" id="driversNote">Bars show how far each signal moves this week's estimate away from the latest lab value, in percentage points of positivity. Red pushes the estimate up, blue pulls it down.</div>
+    </div>
+    <div class="panel">
+      <h2>Where: influenza search signal by emirate</h2>
+      <p class="sub" id="whereSum"></p>
+      <div id="where"></div>
+      <div class="note" id="whereNote"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <h2>Recommended actions: <span id="actRole"></span></h2>
+    <div id="actions"></div>
+  </div>
+</section>
+
+<!-- ================= BACK-TEST ================= -->
+<section id="tab-backtest" class="hidden">
+  <div class="grid g4" id="tiles"></div>
+  <div class="panel" style="margin-top:16px">
+    <h2>Head-to-head: replayed week by week using only data available at the time</h2>
+    <div class="scroll"><table id="cmpTable"></table></div>
+    <div class="note" id="cmpNote"></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel" style="grid-column:1/-1"><h2>Fair test: simple rules with their own setting tuned</h2><div class="scroll"><table id="simpleTable"></table></div>
+      <div class="note">Scored against the same 15% waves. Off-window weeks: WARNING weeks that are neither in a wave nor in the 6 weeks before it. Above-threshold weeks flagged: the share of weeks at or over 15% that had a WARNING that week.</div></div>
+    <div class="panel"><h2>Calibration: does P mean what it says?</h2><div class="scroll"><table id="relTable"></table></div>
+      <div class="note" id="relNote"></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel"><h2>Per-wave timeliness (multi-signal model)</h2><div class="scroll"><table id="waveTable"></table></div>
+      <div class="note">Onset: first of ≥2 consecutive weeks with sentinel positivity ≥ 15%. Gain is measured against the lab-only rule, which can first fire when the onset week's result arrives 2 weeks later.</div></div>
+    <div class="panel"><h2>Operating point: alert probability cut-off sweep</h2><div class="scroll"><table id="sweepTable"></table></div>
+      <div class="note" id="sweepNote"></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel"><h2>Data latency: lab reporting delay</h2><div class="scroll"><table id="latTable"></table></div></div>
+    <div class="panel"><h2>Robustness: missing inputs and threshold choice</h2><div class="scroll"><table id="robTable"></table></div></div>
+  </div>
+  <div class="panel" style="margin-top:16px">
+    <h2>Read this before quoting the numbers</h2>
+    <ul class="clean" id="caveats"></ul>
+  </div>
+</section>
+
+<!-- ================= GOVERNANCE ================= -->
+<section id="tab-governance" class="hidden">
+  <div class="grid g2">
+    <div class="panel"><h2>Data sources (all public, all aggregated)</h2><div class="scroll"><table id="srcTable"></table></div></div>
+    <div class="panel"><h2>Privacy &amp; access controls</h2><ul class="clean" id="privacy"></ul></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel"><h2>Role-based views</h2><div class="scroll"><table id="roleTable"></table></div></div>
+    <div class="panel"><h2>Intended use &amp; safeguards</h2><ul class="clean" id="intended"></ul></div>
+  </div>
+  <div class="panel" style="margin-top:16px"><h2>Model card</h2><div id="modelCard"></div></div>
+</section>
+</main>
+<footer>Decision-support prototype. Not a medical device and not for decisions about individuals. Data: WHO FluNet (UAE), Google Trends, Open-Meteo. <span id="gen"></span></footer>
+
+<script src="data.js"></script>
+<script>
+(() => {
+const D = window.EWARN, S = D.settings;
+const $ = id => document.getElementById(id);
+const ROLE_NAMES = { surv: "Surveillance officer", ops: "Hospital & clinic operations", comm: "Schools & community" };
+const series = D.series, snaps = D.snapshots;
+const wIdx = Object.fromEntries(series.map((s, i) => [s.week, i]));
+const snapBy = Object.fromEntries(snaps.map(s => [s.week, s]));
+const pct = (x, d = 1) => x == null ? "–" : (x * 100).toFixed(d) + "%";
+const fmtWk = w => new Date(w + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+const isoWeek = w => { const d = new Date(w + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7)); const y = new Date(Date.UTC(d.getUTCFullYear(), 0, 1)); return Math.ceil(((d - y) / 864e5 + 1) / 7); };
+const addWk = (w, n) => { const d = new Date(w + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + 7 * n); return d.toISOString().slice(0, 10); };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let role = "surv", cur = snaps.length - 1, outage = false, hindsight = false, timer = null;
+
+// ---------- action playbook (level x role) ----------
+const PLAYBOOK = {
+  NORMAL: {
+    surv: [["Routine weekly review", "Confirm sentinel sites reported; check specimen volumes for completeness.", "No signal above threshold; keep the baseline healthy so the next rise is seen early."]],
+    ops: [["Business as usual", "Standard staffing for ILI clinics and EDs; check the antiviral and test-kit stock cycle.", "Estimated positivity is below the 15% epidemic threshold."]],
+    comm: [["Everyday prevention", "Hand hygiene; stay home when sick; annual flu vaccination reminders.", "Flu activity is at normal levels."]],
+  },
+  WATCH: {
+    surv: [["Step up testing", "Ask sentinel sites to keep swabbing every ILI/SARI case; confirm subtype mix (A/H1, A/H3, B).", "Estimate is rising toward the threshold; lab confirmation lags about 2 weeks."],
+           ["Pre-alert partners", "Share a WATCH notice with hospital operations and school health; review the vaccination campaign timetable.", "Gives 1–3 weeks to prepare before confirmation, at low cost if it turns out to be a false alarm."]],
+    ops: [["Prepare surge capacity", "Review ILI clinic rosters for the next 2–3 weeks; check stock of antivirals, rapid tests and PPE.", "Probability of crossing the epidemic threshold is rising."],
+          ["Vaccinate staff", "Push staff influenza vaccination now.", "Protects workforce capacity ahead of the expected wave."]],
+    comm: [["Get vaccinated now", "Encourage flu vaccination for at-risk groups and school staff.", "Flu activity may increase in the coming weeks."],
+           ["Keep sick children home", "Remind parents of the policy for keeping children home when they have a fever.", "Reduces spread early in a wave."]],
+  },
+  WARNING: {
+    surv: [["Issue influenza advisory", "Notify facilities and the communications team; recommend empirical antivirals for high-risk ILI patients.", "Estimated positivity is above the epidemic threshold with stated probability; supporting signals are listed alongside."],
+           ["Intensify surveillance", "Daily review of SARI admissions; send samples for genomic characterisation; monitor vaccine match.", "Confirms the wave and detects severity or strain shifts."],
+           ["Targeted vaccination push", "Mobile and outreach vaccination for the elderly, chronic disease patients, pregnant women and labour accommodation.", "Highest benefit for those at highest risk, even mid-season."]],
+    ops: [["Activate surge plan", "Extend ILI clinic hours; staff EDs for higher respiratory volumes; enable flu fast-track triage.", "A wave is likely under way or imminent."],
+          ["Infection control", "Masking in waiting areas; cohort respiratory patients; review visitor policy for vulnerable wards.", "Limits hospital spread to high-risk patients."]],
+    comm: [["Flu season advisory", "Send the health advisory to parents; increase cleaning of shared surfaces; track absenteeism through school health only.", "Flu is circulating widely."],
+           ["Protect the vulnerable", "Encourage vaccination and early medical advice for elderly relatives and people with chronic conditions.", "They carry the highest risk of severe illness."]],
+  },
+};
+
+// ---------- tabs / controls ----------
+document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav.tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
+  ["situation", "backtest", "governance"].forEach(t => $("tab-" + t).classList.toggle("hidden", t !== b.dataset.tab));
+  if (b.dataset.tab === "situation") render();
+});
+const slider = $("slider"); slider.max = snaps.length - 1; slider.value = cur;
+slider.oninput = () => { cur = +slider.value; render(); };
+$("role").onchange = e => { role = e.target.value; render(); };
+$("outage").onchange = e => { outage = e.target.checked; render(); };
+$("hindsight").onchange = e => { hindsight = e.target.checked; render(); };
+$("latest").onclick = () => { stop(); cur = snaps.length - 1; slider.value = cur; render(); };
+const stop = () => { clearInterval(timer); timer = null; $("play").textContent = "▶ Replay"; };
+$("play").onclick = () => {
+  if (timer) return stop();
+  if (cur >= snaps.length - 1) cur = Math.max(0, snaps.findIndex(s => s.week >= addWk(snaps[snaps.length - 1].week, -20)));
+  $("play").textContent = "❚❚ Pause";
+  timer = setInterval(() => { if (cur >= snaps.length - 1) return stop(); cur++; slider.value = cur; render(); }, 700);
+};
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => render());
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(render, 120); });
+
+// ---------- view of a snapshot (normal or simulated outage) ----------
+function view(s) {
+  if (outage && s.degraded) return { ...s.degraded, week: s.week, last_lab_week: s.last_lab_week, mode: "degraded: search feed missing, running on lab + season", n_train: s.n_train };
+  return s;
+}
+const suppressed = r => role !== "surv" && r.spec != null && r.spec < S.small_cell;
+
+function render() {
+  const s0 = snaps[cur], s = view(s0);
+  $("wkLabel").textContent = "Week of " + fmtWk(s.week) + " (ISO wk " + isoWeek(s.week) + ")";
+  // level card
+  $("levelBox").className = "level " + s.level;
+  $("levelIcon").textContent = { NORMAL: "✓", WATCH: "!", WARNING: "!!" }[s.level];
+  $("levelName").textContent = s.level;
+  const sub = { NORMAL: "Influenza activity estimated below the epidemic threshold", WATCH: "Rising: may cross the epidemic threshold soon", WARNING: "Influenza wave likely under way or imminent" }[s.level];
+  $("levelSub").textContent = role === "surv" ? `P(positivity ≥ ${pct(S.threshold, 0)} this or next week) = ${(s.p * 100).toFixed(0)}%` : sub;
+  $("modeBanner").classList.toggle("hidden", !s.mode.startsWith("degraded"));
+  $("modeBanner").textContent = "⚠ Degraded mode: the search feed is missing, so the estimate runs on lab + seasonal signals only. Uncertainty is wider and warnings may come later.";
+  const lastLab = series[wIdx[s.last_lab_week]];
+  const numbers = role === "comm" ? `
+      <p class="sub">${sub}. Based on laboratory results up to ${fmtWk(s.last_lab_week)}, plus current online search trends and the usual seasonal pattern.</p>` : `
+      <div class="sub">Estimated positivity this week</div>
+      <div class="big">${pct(s.now.rate)}</div>
+      <div class="sub" style="margin-bottom:10px">80% range ${pct(s.now.lo, 0)}–${pct(s.now.hi, 0)}</div>
+      ${gauge(s)}
+      <dl class="kv">
+        <dt>Next week</dt><dd>${pct(s.next.rate)} (${pct(s.next.lo, 0)}–${pct(s.next.hi, 0)})</dd>
+        <dt>Latest lab result</dt><dd>${suppressed(lastLab) ? "suppressed (&lt;" + S.small_cell + " specimens)" : pct(lastLab.rate)} · wk of ${fmtWk(s.last_lab_week)}</dd>
+        <dt>Epidemic threshold</dt><dd>${pct(S.threshold, 0)} sentinel positivity</dd>
+        ${role === "surv" ? `<dt>Specimens (latest lab)</dt><dd>${lastLab.spec ?? "–"}</dd><dt>Model refit on</dt><dd>${s0.n_train} weeks available at the time</dd>` : ""}
+      </dl>`;
+  $("numbers").innerHTML = numbers;
+  renderDrivers(s, lastLab);
+  renderActions(s);
+  renderTimeline(s);
+}
+
+function gauge(s) {
+  // this week's estimate, its 80% range and the epidemic threshold on one 0–45% scale
+  const W = 300, x = v => 6 + Math.min(v, 0.45) / 0.45 * (W - 12);
+  const col = { NORMAL: css("--good"), WATCH: css("--warning"), WARNING: css("--critical") }[s.level];
+  return `<svg class="gauge" viewBox="0 0 ${W} 46" role="img" aria-label="Estimate ${pct(s.now.rate)} with range ${pct(s.now.lo, 0)} to ${pct(s.now.hi, 0)}; threshold ${pct(S.threshold, 0)}">
+    <rect x="6" y="14" width="${W - 12}" height="8" rx="4" fill="${css("--surface-2")}"/>
+    <rect x="${x(s.now.lo)}" y="14" width="${x(s.now.hi) - x(s.now.lo)}" height="8" rx="4" fill="${col}" opacity=".35"/>
+    <line x1="${x(S.threshold)}" x2="${x(S.threshold)}" y1="6" y2="30" stroke="${css("--critical")}" stroke-width="2" stroke-dasharray="3 2"/>
+    <text x="${x(S.threshold)}" y="42" text-anchor="middle" fill="${css("--critical")}">${pct(S.threshold, 0)} threshold</text>
+    <circle cx="${x(s.now.rate)}" cy="18" r="7" fill="${col}" stroke="${css("--surface")}" stroke-width="2"/>
+    <text x="6" y="42" fill="${css("--muted")}">0%</text><text x="${W - 6}" y="42" text-anchor="end" fill="${css("--muted")}">45%</text>
+  </svg>`;
+}
+
+function renderDrivers(s, lastLab) {
+  const showNum = role !== "comm";
+  const d = s.drivers;
+  const inModel = d.filter(x => x.pp != null);
+  const sumPP = inModel.reduce((a, x) => a + x.pp, 0);
+  const resid = s.now.rate * 100 - (lastLab.rate ?? 0) * 100 - sumPP;
+  $("anchorTxt").innerHTML = showNum
+    ? `Starts from the latest lab value, <b>${pct(lastLab.rate)}</b> (wk of ${fmtWk(s.last_lab_week)}), then adjusts for what has happened since.${Math.abs(resid) >= 0.5 ? ` Long-run average drift: ${resid > 0 ? "+" : ""}${resid.toFixed(1)} pp.` : ""}`
+    : `What is pushing the estimate this week:`;
+  const max = Math.max(4, ...inModel.map(x => Math.abs(x.pp)));
+  const up = css("--critical"), down = css("--accent");
+  $("drivers").innerHTML = d.map(x => {
+    const has = x.pp != null;
+    const w = has ? Math.abs(x.pp) / max * 50 : 0;
+    const bar = `<div class="dbar"><div class="mid"></div><div class="fill" style="background:${x.pp >= 0 ? up : down};${x.pp >= 0 ? `left:50%;width:${w}%` : `left:${50 - w}%;width:${w}%`}"></div></div>`;
+    const val = has && showNum ? `${x.pp > 0 ? "+" : ""}${x.pp.toFixed(1)} pp` : (has ? (x.pp > 0.5 ? "↑" : x.pp < -0.5 ? "↓" : "→") : "context");
+    return `<div class="driver"><div><div class="lbl">${x.label}</div>${showNum ? `<div class="txt">${x.text}</div>` : ""}</div><div class="val">${val}</div>${has ? bar : ""}</div>`;
+  }).join("");
+}
+
+function renderActions(s) {
+  $("actRole").textContent = ROLE_NAMES[role];
+  const acts = PLAYBOOK[s.level][role];
+  const ev = role === "comm" ? "" : `<div class="note">Evidence: ${s.drivers.filter(x => x.pp != null).slice(0, 2).map(x => x.text).join("; ")}. Assumes a lab reporting lag of ${S.lab_lag_wk} weeks; model fitted on ${s.n_train ?? snaps[cur].n_train} past weeks.</div>`;
+  $("actions").innerHTML = acts.map(a => `<div class="action"><div class="who">${ROLE_NAMES[role]}</div><div class="what">${a[0]}</div><div>${a[1]}</div><div class="why">Why: ${a[2]}</div></div>`).join("") + ev;
+}
+
+// ---------- charts ----------
+// One shared time window for the positivity chart, alert strip, search chart and emirate sparklines.
+// follow: the window ends just after the decision week and moves with replay; fixed: a chosen date range.
+let win = { mode: "follow", span: 52 };
+const N = series.length;
+const idxOn = (d, last) => { let k = -1; for (let i = 0; i < N; i++) { if (last ? series[i].week <= d : series[i].week >= d) { k = i; if (!last) break; } } return k; };
+function windowFor(iT) {
+  let i0, i1;
+  if (win.mode === "fixed") { i0 = win.i0; i1 = win.i1; }
+  else { i1 = Math.min(N - 1, iT + (hindsight ? 10 : 2)); i0 = Math.max(0, i1 - win.span); }
+  i0 = Math.max(0, Math.min(i0, N - 7)); i1 = Math.min(N - 1, Math.max(i1, i0 + 6));
+  return [i0, i1];
+}
+function setFixed(i0, i1) { win = { mode: "fixed", i0: Math.round(Math.min(i0, i1)), i1: Math.round(Math.max(i0, i1)) }; render(); }
+function zoom(f) {
+  const [i0, i1] = windowFor(wIdx[snaps[cur].week]);
+  const span = Math.max(6, Math.min(N - 1, Math.round((i1 - i0) * f)));
+  if (win.mode === "follow") { win.span = span; return render(); }
+  const c = (i0 + i1) / 2; let a = Math.round(c - span / 2), b = a + span;
+  if (a < 0) { b -= a; a = 0; } if (b > N - 1) { a -= b - (N - 1); b = N - 1; }
+  setFixed(Math.max(0, a), b);
+}
+(function initRange() {
+  const years = [...new Set(series.map(r => r.week.slice(0, 4)))].filter(y => series.filter(r => r.week.startsWith(y)).length >= 26);
+  $("rYears").innerHTML = years.map(y => `<button type="button" data-year="${y}">${y}</button>`).join("");
+  $("rYears").onclick = e => { const y = e.target.dataset.year; if (y) setFixed(idxOn(y + "-01-01"), idxOn(y + "-12-31", true)); };
+  $("rPresets").onclick = e => { const b = e.target; if (b.dataset.all) setFixed(0, N - 1); else if (b.dataset.span) { win = { mode: "follow", span: +b.dataset.span }; render(); } };
+  const custom = () => { const a = $("rFrom").value, b = $("rTo").value; if (!a || !b) return; const i0 = idxOn(a), i1 = idxOn(b, true); if (i0 >= 0 && i1 > i0) setFixed(i0, i1); };
+  $("rFrom").onchange = custom; $("rTo").onchange = custom;
+  $("rFrom").min = $("rTo").min = series[0].week; $("rFrom").max = $("rTo").max = series[N - 1].week;
+  $("zIn").onclick = () => zoom(1 / 1.6); $("zOut").onclick = () => zoom(1.6);
+  $("zReset").onclick = () => { win = { mode: "follow", span: 52 }; render(); };
+})();
+function syncRangeControls(i0, i1) {
+  document.querySelectorAll("#rPresets button").forEach(b => b.setAttribute("aria-pressed", String(
+    !!((b.dataset.span && win.mode === "follow" && +b.dataset.span === win.span) || (b.dataset.all && win.mode === "fixed" && i0 === 0 && i1 === N - 1)))));
+  document.querySelectorAll("#rYears button").forEach(b => { const y = b.dataset.year;
+    b.setAttribute("aria-pressed", String(win.mode === "fixed" && i0 === idxOn(y + "-01-01") && i1 === idxOn(y + "-12-31", true))); });
+  if (document.activeElement !== $("rFrom")) $("rFrom").value = series[i0].week;
+  if (document.activeElement !== $("rTo")) $("rTo").value = series[i1].week;
+}
+
+function renderTimeline(s) {
+  const T = s.week, iT = wIdx[T];
+  const [i0, i1] = windowFor(iT);
+  syncRangeControls(i0, i1);
+  const inView = i => i >= i0 && i <= i1;
+  const W = Math.max(300, Math.round($("tlWrap").clientWidth || 1000)), H = Math.round(Math.min(340, Math.max(220, W * 0.38))), m = { l: 40, r: 10, t: 34, b: 26 };
+  $("tl").setAttribute("viewBox", `0 0 ${W} ${H}`); $("strip").setAttribute("viewBox", `0 0 ${W} 26`); $("sc").setAttribute("viewBox", `0 0 ${W} 110`);
+  const n = i1 - i0;
+  const x = i => m.l + (i - i0) / n * (W - m.l - m.r);
+  const ymax = 0.45, y = v => m.t + (1 - Math.min(v, ymax) / ymax) * (H - m.t - m.b);
+  const labCut = wIdx[s.last_lab_week];
+  const lab = css("--series-lab"), nowc = css("--series-now"), grid = css("--grid"), muted = css("--muted"), crit = css("--critical");
+  let g = `<defs><clipPath id="plot"><rect x="${m.l - 6}" y="0" width="${W - m.l - m.r + 12}" height="${H}"/></clipPath></defs>`;
+  if (hindsight) D.waves.forEach(w => { const a = wIdx[w.onset], b = wIdx[w.end]; if (b < i0 || a > i1) return;
+    g += `<rect x="${x(Math.max(a, i0))}" y="${m.t}" width="${Math.max(1, x(Math.min(b, i1)) - x(Math.max(a, i0)))}" height="${H - m.t - m.b}" fill="${css("--surface-2")}"/>`; });
+  for (let v = 0; v <= ymax + 1e-9; v += 0.1) g += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${grid}"/><text x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end" fill="${muted}" font-size="11">${Math.round(v * 100)}%</text>`;
+  // month ticks, thinned to the space available; long ranges show quarters; January shows the year
+  const pxPerWk = (W - m.l - m.r) / n, minGap = W < 600 ? 60 : 40;
+  let lastLx = -1e9;
+  for (let i = i0 + 1; i <= i1; i++) { const w = series[i].week; if (w.slice(8) > "07") continue;
+    const mo = w.slice(5, 7), isJan = mo === "01";
+    if (pxPerWk * 4.3 < 14 && !["01", "04", "07", "10"].includes(mo)) continue;
+    if (x(i) - lastLx < minGap && !(isJan && x(i) - lastLx > 30)) continue;
+    lastLx = x(i);
+    g += `<line x1="${x(i)}" x2="${x(i)}" y1="${H - m.b}" y2="${H - m.b + 4}" stroke="${muted}"/><text x="${x(i)}" y="${H - 8}" fill="${isJan ? css("--text-2") : muted}" font-size="11" font-weight="${isJan ? 600 : 400}" text-anchor="middle">${isJan ? w.slice(0, 4) : new Date(w + "T00:00:00Z").toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" })}</text>`; }
+  g += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(S.threshold)}" y2="${y(S.threshold)}" stroke="${crit}" stroke-dasharray="5 4" stroke-width="1.5"/><text x="${W - m.r}" y="${y(S.threshold) - 5}" text-anchor="end" fill="${crit}" font-size="11">epidemic threshold ${pct(S.threshold, 0)}</text>`;
+  if (inView(labCut)) g += `<line x1="${x(labCut)}" x2="${x(labCut)}" y1="${m.t - 12}" y2="${H - m.b}" stroke="${muted}" stroke-dasharray="2 3"/><text x="${x(labCut) + (x(labCut) < m.l + 130 ? 4 : -4)}" y="${m.t - 16}" text-anchor="${x(labCut) < m.l + 130 ? "start" : "end"}" fill="${muted}" font-size="11">lab confirmed to here</text>`;
+  if (inView(iT)) g += `<line x1="${x(iT)}" x2="${x(iT)}" y1="${m.t - 2}" y2="${H - m.b}" stroke="${css("--text-2")}" stroke-width="1.5"/><text x="${x(iT) + (x(iT) > W - 70 ? -4 : 4)}" y="${m.t - 4}" text-anchor="${x(iT) > W - 70 ? "end" : "start"}" fill="${css("--text-2")}" font-size="11" font-weight="600">this week</text>`;
+  else g += `<text x="${W - m.r}" y="${m.t - 4}" text-anchor="end" fill="${css("--text-2")}" font-size="11">This week (${fmtWk(T)}) is outside the selected range</text>`;
+  // lab line as known at the time, plus the hindsight continuation
+  const path = (a, b) => { let d = "", pen = false; for (let i = Math.max(a, i0); i <= Math.min(b, i1); i++) { const r = series[i]; if (r.rate == null || r.incomplete || suppressed(r)) { pen = false; continue; } d += (pen ? "L" : "M") + x(i) + "," + y(r.rate); pen = true; } return d; };
+  g += `<g clip-path="url(#plot)"><path d="${path(i0, labCut)}" fill="none" stroke="${lab}" stroke-width="2" stroke-linejoin="round"/>`;
+  if (hindsight) g += `<path d="${path(labCut, i1)}" fill="none" stroke="${lab}" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/>`;
+  if (n <= 30) for (let i = i0; i <= Math.min(labCut, i1); i++) { const r = series[i]; if (r.rate != null && !r.incomplete && !suppressed(r)) g += `<circle cx="${x(i)}" cy="${y(r.rate)}" r="3" fill="${lab}"/>`; }
+  let nd = "", pen = false;
+  for (let i = i0; i <= Math.min(iT, i1); i++) { const sn = snapBy[series[i].week]; if (!sn) { pen = false; continue; } nd += (pen ? "L" : "M") + x(i) + "," + y(view(sn).now.rate); pen = true; }
+  g += `<path d="${nd}" fill="none" stroke="${nowc}" stroke-width="2" opacity=".55"/>`;
+  if (inView(iT)) {
+    const xb = x(iT), xn = x(iT + 1);
+    g += `<path d="M${xb},${y(s.now.lo)}L${xn},${y(s.next.lo)}L${xn},${y(s.next.hi)}L${xb},${y(s.now.hi)}Z" fill="${css("--band")}"/>`;
+    g += `<line x1="${xb}" x2="${xb}" y1="${y(s.now.lo)}" y2="${y(s.now.hi)}" stroke="${nowc}" stroke-width="2"/>`;
+    g += `<path d="M${xb},${y(s.now.rate)}L${xn},${y(s.next.rate)}" stroke="${nowc}" stroke-width="2" stroke-dasharray="4 3"/>`;
+    g += `<circle cx="${xb}" cy="${y(s.now.rate)}" r="5" fill="${nowc}" stroke="${css("--surface")}" stroke-width="2"/><circle cx="${xn}" cy="${y(s.next.rate)}" r="4" fill="${css("--surface")}" stroke="${nowc}" stroke-width="2"/>`;
+  }
+  g += `</g>`;
+  // explain the empty part of a range that runs past what was known at the decision week
+  if (!hindsight && i1 > labCut + 1) { const fx0 = Math.max(m.l, inView(labCut) ? x(labCut) : m.l), fx1 = W - m.r;
+    if (fx1 - fx0 > 170) { const cx = (fx0 + fx1) / 2, cy = m.t + (H - m.t - m.b) * 0.45;
+      g += `<text x="${cx}" y="${cy}" text-anchor="middle" fill="${muted}" font-size="12">Not yet reported on ${fmtWk(T)}</text><text x="${cx}" y="${cy + 16}" text-anchor="middle" fill="${muted}" font-size="12">Tick “Show what happened next” to reveal</text>`; } }
+  g += `<rect id="sel" y="${m.t}" height="${H - m.t - m.b}" width="0" fill="${css("--accent")}" opacity=".15"/><line id="cross" y1="${m.t}" y2="${H - m.b}" stroke="${muted}" opacity="0"/>`;
+  $("tl").innerHTML = g;
+  $("tlLegend").innerHTML = `<span><i style="background:${lab}"></i>Lab-confirmed positivity${hindsight ? " (dashed: arrived later)" : ""}</span><span><i style="background:${nowc};opacity:.55"></i>Estimate as issued each week</span><span><i style="background:${nowc}"></i>This week &amp; next, with 80% range</span>${hindsight ? `<span><i style="background:${css("--surface-2")};height:10px"></i>Epidemic wave (hindsight)</span>` : ""}`;
+  $("tlNote").textContent = role !== "surv" ? `Weeks with fewer than ${S.small_cell} specimens are suppressed in this view (small-cell rule).` : `Weeks with fewer than ${S.min_spec} specimens, or still being reported, are excluded from modelling.`;
+  // alert strip
+  const strip = [];
+  for (let i = i0; i <= Math.min(i1, iT); i++) { const sn = snapBy[series[i].week]; if (!sn) continue; const lv = view(sn).level;
+    strip.push(`<rect x="${x(i) - pxPerWk / 2 + (pxPerWk > 4 ? 1 : 0)}" y="3" width="${Math.max(1, pxPerWk - (pxPerWk > 4 ? 2 : 0))}" height="20" rx="${pxPerWk > 6 ? 2 : 0}" fill="${{ NORMAL: css("--good"), WATCH: css("--warning"), WARNING: css("--critical") }[lv]}" opacity="${lv === "NORMAL" ? .35 : .9}"><title>${fmtWk(sn.week)}: ${lv}</title></rect>`); }
+  $("strip").innerHTML = strip.join("");
+  // search chart (Abu Dhabi)
+  let sd = "", sp = false, sg = "";
+  const ys = v => 8 + (1 - v / 100) * 88;
+  [0, 50, 100].forEach(v => sg += `<line x1="${m.l}" x2="${W - m.r}" y1="${ys(v)}" y2="${ys(v)}" stroke="${grid}"/><text x="${m.l - 6}" y="${ys(v) + 4}" text-anchor="end" fill="${muted}" font-size="11">${v}</text>`);
+  for (let i = i0; i <= Math.min(i1, iT); i++) { const r = series[i]; if (r.search == null || (outage && i >= iT - 1)) { sp = false; continue; } sd += (sp ? "L" : "M") + x(i) + "," + ys(r.search); sp = true; }
+  if (inView(iT)) sg += `<line x1="${x(iT)}" x2="${x(iT)}" y1="8" y2="96" stroke="${css("--text-2")}" stroke-width="1.5"/>`;
+  if (outage && inView(iT)) sg += `<text x="${x(iT) - 6}" y="24" text-anchor="end" fill="${css("--critical")}" font-size="11">feed missing</text>`;
+  $("sc").innerHTML = sg + `<path d="${sd}" fill="none" stroke="${css("--series-search")}" stroke-width="2"/>`;
+  renderWhere(s, i0, i1);
+  // hover tooltip + drag to zoom
+  const svg = $("tl"), tip = $("tip");
+  const idxAt = ev => { const r = svg.getBoundingClientRect(); return Math.round(i0 + ((ev.clientX - r.left) / r.width * W - m.l) / (W - m.l - m.r) * n); };
+  let drag = null;
+  svg.onpointerdown = ev => { if (ev.pointerType !== "mouse" || ev.button !== 0) return; ev.preventDefault(); drag = { a: Math.max(i0, Math.min(i1, idxAt(ev))) }; };
+  svg.onpointermove = ev => {
+    const i = idxAt(ev);
+    if (drag) { const b = Math.max(i0, Math.min(i1, i)); drag.b = b; const sel = $("sel"); sel.setAttribute("x", x(Math.min(drag.a, b))); sel.setAttribute("width", Math.abs(x(b) - x(drag.a))); tip.style.display = "none"; return; }
+    if (i < i0 || i > i1) return;
+    const r = svg.getBoundingClientRect(), row = series[i], sn = snapBy[row.week], known = i <= labCut || hindsight;
+    $("cross").setAttribute("x1", x(i)); $("cross").setAttribute("x2", x(i)); $("cross").setAttribute("opacity", 1);
+    let h = `<div><b>Week of ${fmtWk(row.week)}</b></div>`;
+    h += `<div>Lab positivity (UAE): <b>${!known ? "not yet reported" : suppressed(row) ? "suppressed" : row.incomplete ? "incomplete" : pct(row.rate)}</b></div>`;
+    if (role === "surv" && known && row.spec != null) h += `<div class="muted">${row.pos} positive / ${row.spec} specimens</div>`;
+    if (sn && i <= iT) { const v = view(sn); h += `<div>Estimate issued: <b>${pct(v.now.rate)}</b> · <span class="pill ${v.level}">${v.level}</span></div>`; }
+    if (row.search != null && i <= iT) h += `<div class="muted">Abu Dhabi search index ${row.search} · night temp ${row.temp_min ?? "–"}°C</div>`;
+    tip.innerHTML = h; tip.style.display = "block";
+    const left = ev.clientX - r.left; tip.style.left = Math.max(0, Math.min(left + 14, r.width - 200)) + "px"; tip.style.top = "10px";
+  };
+  svg.onpointerup = () => { const d = drag; drag = null; if (d && d.b != null && Math.abs(d.b - d.a) >= 3) return setFixed(d.a, d.b); $("sel").setAttribute("width", 0); };
+  svg.onpointerleave = () => { tip.style.display = "none"; $("cross").setAttribute("opacity", 0); if (drag) { drag = null; $("sel").setAttribute("width", 0); } };
+  svg.ondblclick = () => { win = { mode: "follow", span: 52 }; render(); };
+}
+
+// ---------- where: emirate search signal ----------
+function renderWhere(s, i0, i1) {
+  const E = D.emirates, iT = wIdx[s.week], lag = S.lab_lag_wk;
+  const avg3 = (v, i) => { const xs = [v[i], v[i - 1], v[i - 2]].filter(z => z != null); return xs.length >= 2 ? xs.reduce((a, b) => a + b, 0) / xs.length : null; };
+  const rows = E.items.map(e => {
+    if (e.suppressed) return { ...e };
+    const now = outage ? null : avg3(e.values, iT), then = avg3(e.values, iT - lag);
+    return { ...e, level: now, change: now != null && then ? now / then - 1 : null };
+  });
+  const live = rows.filter(r => !r.suppressed && r.change != null).sort((a, b) => b.change - a.change);
+  const off = rows.filter(r => r.suppressed || r.change == null);
+  const showNum = role !== "comm";
+  const word = c => c > 0.1 ? "rising" : c < -0.1 ? "falling" : "steady";
+  if (outage) $("whereSum").textContent = "Search feed missing this week, so there is no location signal. Lab data is national only.";
+  else if (live.length) {
+    const top = live[0], ups = live.filter(r => r.change > 0.1);
+    $("whereSum").innerHTML = ups.length
+      ? `Influenza searches are rising fastest in <b>${top.name}</b>${showNum ? ` (${top.change > 0 ? "+" : ""}${Math.round(top.change * 100)}% over ${lag} wk)` : ""}${ups.length > 1 ? `, also in ${ups.slice(1).map(r => r.name).join(" and ")}` : ""}.`
+      : `Influenza searches are ${live.every(r => r.change < -0.1) ? "falling" : "steady"} in all emirates with enough search volume.`;
+  } else $("whereSum").textContent = "";
+  const max = 0.8, upC = css("--critical"), downC = css("--accent"), spark = css("--series-search"), grid = css("--grid");
+  const sparkline = v => { const a = i0, b = Math.min(i1, iT); if (b - a < 2) return "<span></span>"; const W = 120, H = 28;
+    let d = "", pen = false; for (let i = a; i <= b; i++) { if (v[i] == null) { pen = false; continue; } d += (pen ? "L" : "M") + ((i - a) / (b - a) * W).toFixed(1) + "," + (H - 2 - v[i] / 100 * (H - 4)).toFixed(1); pen = true; }
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="${W}" y1="${H - 2}" y2="${H - 2}" stroke="${grid}"/><path d="${d}" fill="none" stroke="${spark}" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>`; };
+  $("where").innerHTML = live.map(r => {
+    const w = Math.min(Math.abs(r.change), max) / max * 50;
+    const bar = `<div class="dbar"><div class="mid"></div><div class="fill" style="background:${r.change >= 0 ? upC : downC};${r.change >= 0 ? `left:50%;width:${w}%` : `left:${50 - w}%;width:${w}%`}"></div></div>`;
+    return `<div class="erow"><div class="nm">${r.name}</div>${sparkline(r.values)}<div class="lv" title="3-week average search index, one scale for all emirates">${showNum ? Math.round(r.level) : ""}</div><div class="ch">${bar}<span>${showNum ? `${r.change > 0 ? "+" : ""}${Math.round(r.change * 100)}%` : word(r.change)}</span></div></div>`;
+  }).join("") + off.map(r => `<div class="erow off"><div class="nm">${r.name}</div><div class="why">${r.suppressed ? `Too little search volume to read (zero in ${Math.round(r.zero_share * 100)}% of weeks)` : "No search data this week"}</div></div>`).join("");
+  $("whereNote").textContent = `Search signal only: lab data is published for the UAE as a whole, so this shows where people are searching, not confirmed cases. Columns: trend over the chart's date range, 3-week average search index (one scale for all emirates), change over the ${lag}-week lab gap. ${E.rule}`;
+}
+
+// ---------- back-test tab ----------
+function renderBacktest() {
+  const B = D.backtest, C = B.comparison, keys = Object.keys(C), main = C[keys[0]], lab = C["Lab-only threshold rule (current practice)"];
+  const SR = B.simple_rules, cal = SR["Calendar rule, ISO wk 34-45 every year"], lsm = C["Lab + season only (no digital signals)"];
+  const tiles = [
+    [`${main.waves_timely} of ${main.waves_scored}`, `waves warned before lab confirmation, with ${main.false_alarms_per_year} false-alarm episodes (lab-only rule: ${lab.false_alarms_per_year}/yr)`],
+    [`${Math.round(main.weekly_sensitivity * 100)}%`, `of above-threshold weeks flagged that week, against ${Math.round(cal.weekly_sensitivity * 100)}% for a fixed Sep–Nov flu-season calendar`],
+    [`${main.nowcast_mae_pp} pp`, `error estimating this week's positivity, against ${lab.nowcast_mae_pp} pp carrying the last lab value forward and ${lsm.nowcast_mae_pp} pp without search`],
+    [`${B.brier}`, `Brier score: probabilities are well calibrated (see the calibration table)`],
+  ];
+  $("tiles").innerHTML = tiles.map(t => `<div class="panel stat"><div class="num">${t[0]}</div><div class="cap">${t[1]}</div></div>`).join("");
+  const cols = [["waves_timely", "Waves warned early"], ["median_gain_vs_lab_wk", "Median gain vs lab rule (wk)"], ["median_lead_vs_onset_wk", "Median lead vs onset (wk)"], ["false_alarms_per_year", "False alarms / yr"], ["episode_ppv", "Alert PPV"], ["weekly_sensitivity", "Weekly sensitivity"], ["weekly_ppv", "Weekly PPV"], ["nowcast_mae_pp", "Nowcast MAE (pp)"]];
+  const f = v => v == null || Number.isNaN(v) ? "–" : v;
+  $("cmpTable").innerHTML = `<tr><th>Approach</th>${cols.map(c => `<th>${c[1]}</th>`).join("")}</tr>` + keys.map((k, i) => `<tr class="${i === 0 ? "hl" : ""}"><td>${k}</td>${cols.map(c => `<td>${c[0] === "waves_timely" ? `${C[k][c[0]]}/${C[k].waves_scored}` : f(C[k][c[0]])}</td>`).join("")}</tr>`).join("");
+  $("cmpNote").textContent = `Replayed ${B.settings.backtest_start} to latest: each week the model is refit using only data available that week (lab results lag ${B.settings.lab_lag_wk} weeks). All model rows use the same alert cut-off. An alert episode counts as true if it falls within ${B.settings.window_before_onset_wk} weeks before onset or during a wave.`;
+  $("waveTable").innerHTML = `<tr><th>Onset</th><th>Peak</th><th>First warning</th><th>vs onset</th><th>vs lab rule</th></tr>` + main.per_wave.map(p => `<tr><td>${fmtWk(p.onset)}</td><td>${pct(p.peak_rate, 0)} · ${fmtWk(p.peak_week)}</td><td>${p.first_warning ? fmtWk(p.first_warning) : "missed"}</td><td>${p.lead_vs_onset_wk == null ? "–" : (p.lead_vs_onset_wk > 0 ? p.lead_vs_onset_wk + " wk before" : -p.lead_vs_onset_wk + " wk after")}</td><td>${p.gain_vs_lab_only_wk == null ? "–" : "+" + p.gain_vs_lab_only_wk + " wk"}</td></tr>`).join("");
+  const sk = Object.keys(SR);
+  $("simpleTable").innerHTML = `<tr><th>Rule</th><th>Waves early</th><th>Gain vs 15% lab rule (wk)</th><th>False-alarm episodes/yr</th><th>Off-window WARNING wks/yr</th><th>Above-threshold weeks flagged</th></tr>` + sk.map(k => `<tr class="${k.startsWith("Multi-signal model, P>=0.35") ? "hl" : ""}"><td>${k}</td><td>${SR[k].waves_timely}/${SR[k].waves_scored}</td><td>${f(SR[k].median_gain_vs_lab_wk)}</td><td>${SR[k].false_alarms_per_year}</td><td>${SR[k].offwindow_warning_weeks_per_year}</td><td>${Math.round(SR[k].weekly_sensitivity * 100)}%</td></tr>`).join("");
+  $("relTable").innerHTML = `<tr><th>Predicted P(≥15% this week)</th><th>Weeks</th><th>Mean predicted</th><th>Observed share ≥15%</th></tr>` + B.reliability.map(r => `<tr><td>${r.bin.replace("(-0.001", "[0")}</td><td>${r.n}</td><td>${Math.round(r.mean_p * 100)}%</td><td>${Math.round(r.observed * 100)}%</td></tr>`).join("");
+  $("relNote").textContent = `Out-of-sample: each week's probability was issued before that week's lab result was known. Brier score ${B.brier} (lower is better; 0 is perfect).`;
+  const OP = B.operating_point;
+  $("sweepTable").innerHTML = `<tr><th>P cut-off</th><th>Waves early</th><th>Gain (wk)</th><th>False alarms/yr</th><th>Alert PPV</th><th>Weekly sens.</th></tr>` + OP.sweep.map(r => `<tr class="${r.cut === OP.chosen_cut ? "hl" : ""}"><td>${r.cut}</td><td>${r.waves_timely}</td><td>${f(r.median_gain_vs_lab_wk)}</td><td>${r.false_alarms_per_year}</td><td>${f(r.episode_ppv)}</td><td>${f(r.weekly_sensitivity)}</td></tr>`).join("");
+  $("sweepNote").textContent = `Chosen rule: the most timely cut-off whose false-alarm rate does not exceed the lab-only rule (${OP.lab_only_false_alarms_per_year}/yr). Chosen: P ≥ ${OP.chosen_cut} for WARNING, P ≥ ${OP.chosen_cut / 2} for WATCH. This was tuned on the same 5 waves, so treat it as provisional.`;
+  $("latTable").innerHTML = `<tr><th>Lab delay</th><th>Approach</th><th>Waves early</th><th>Gain (wk)</th><th>False alarms/yr</th><th>PPV</th></tr>` + Object.entries(B.latency).flatMap(([k, v]) => Object.entries(v).map(([m, r]) => `<tr><td>${k}</td><td>${m === "multi_signal" ? "Multi-signal" : "Lab-only rule"}</td><td>${r.waves_timely}/${r.waves_scored}</td><td>${f(r.median_gain_vs_lab_wk)}</td><td>${r.false_alarms_per_year}</td><td>${f(r.episode_ppv)}</td></tr>`)).join("");
+  const mi = Object.entries(B.missing_inputs)[0];
+  $("robTable").innerHTML = `<tr><th>Scenario</th><th>Waves early</th><th>Gain (wk)</th><th>False alarms/yr</th><th>Nowcast MAE</th></tr>`
+    + `<tr><td>Baseline (all inputs)</td><td>${main.waves_timely}/${main.waves_scored}</td><td>${main.median_gain_vs_lab_wk}</td><td>${main.false_alarms_per_year}</td><td>${main.nowcast_mae_pp} pp</td></tr>`
+    + `<tr><td>${mi[0]} → degraded mode in ${mi[1].degraded_weeks} wks</td><td>${mi[1].waves_timely}/${mi[1].waves_scored}</td><td>${mi[1].median_gain_vs_lab_wk}</td><td>${mi[1].false_alarms_per_year}</td><td>${mi[1].nowcast_mae_pp} pp</td></tr>`
+    + Object.entries(B.threshold_sensitivity).flatMap(([k, v]) => Object.entries(v).map(([m, r]) => `<tr><td>${k}: ${m === "multi_signal" ? "multi-signal" : "lab-only rule"}</td><td>${r.waves_timely}/${r.waves_scored}</td><td>${f(r.median_gain_vs_lab_wk)}</td><td>${r.false_alarms_per_year}</td><td>${r.nowcast_mae_pp != null ? r.nowcast_mae_pp + " pp" : "–"}</td></tr>`)).join("");
+  const ls = C["Lab + season only (no digital signals)"], env = C["Same + weather + dust"], so = C["Search-only anomaly (single signal, GFT-style)"];
+  $("caveats").innerHTML = [
+    `<b>Small sample:</b> ${main.waves_scored} scored waves (2022–2026). Results are reported as counts, not rates. A 2022 summer wave predates the back-test window.`,
+    `<b>The UAE flu season is regular.</b> A fixed calendar rule (warn ISO weeks 34–45 every year) also warned before every autumn wave (${cal.waves_timely}/${cal.waves_scored}, +${cal.median_gain_vs_lab_wk} wk) with no false alarms. So most of the head start over the lab-only rule comes from seasonality, not from this model. A lab rule with a lower threshold buys time only by adding false alarms (8%: ${SR["Lab-only rule, fires at 8%"].false_alarms_per_year}/yr).`,
+    `<b>What the model adds over a calendar:</b> it flags ${Math.round(main.weekly_sensitivity * 100)}% of above-threshold weeks (calendar: ${Math.round(cal.weekly_sensitivity * 100)}%), including activity outside the usual window such as the Feb 2025 second peak; it gives a level with a range rather than a date; and it gives calibrated probabilities. Search adds +${main.median_gain_vs_lab_wk - ls.median_gain_vs_lab_wk} wk over lab + season and cuts nowcast error from ${ls.nowcast_mae_pp} to ${main.nowcast_mae_pp} pp.`,
+    `<b>Trade-offs:</b> at a 1-week lab lag, the model has more false alarms than the lab rule (${B.latency["lag 1 wk"].multi_signal.false_alarms_per_year} vs ${B.latency["lag 1 wk"].lab_only_rule.false_alarms_per_year}/yr). At a 12% threshold it has ${B.threshold_sensitivity["threshold 12%"].multi_signal.false_alarms_per_year}/yr. The WATCH tier (P ≥ ${B.operating_point.chosen_cut / 2}) is noisy by design: it is a "get ready" signal, not an alarm.`,
+    `<b>Search is not a crystal ball:</b> searches move with infection, not before it. Used alone (Google Flu Trends-style), they warned early for only ${so.waves_timely} of ${so.waves_scored} waves. Search is only ever used as an adjustment to lab data.`,
+    `<b>Environment tested, not used:</b> adding weather and dust made results worse (${env.false_alarms_per_year} false alarms/yr, MAE ${env.nowcast_mae_pp} pp), so they are shown as context only.`,
+    `<b>Ground truth is sentinel positivity,</b> not hospital burden. Testing volumes rose about 6× from 2023; positivity is used because it is robust to that change.`,
+    `<b>Historical reporting delays</b> are simulated with a fixed ${B.settings.lab_lag_wk}-week lag; real vintages of FluNet were not available. Google Trends values are today's download, and Google may revise past values slightly.`,
+  ].map(x => `<li>${x}</li>`).join("");
+}
+
+// ---------- governance tab ----------
+function renderGovernance() {
+  $("srcTable").innerHTML = `<tr><th>Signal</th><th>Type</th><th>Granularity</th><th>Latency</th><th>Role in model</th></tr>
+    <tr><td>WHO FluNet: UAE sentinel influenza tests</td><td>Health service / lab</td><td>National, weekly counts</td><td>~${S.lab_lag_wk} weeks</td><td>Anchor and ground truth</td></tr>
+    <tr><td>Google Trends: Influenza / Fever topics (Abu Dhabi, UAE)</td><td>Population behaviour</td><td>Emirate, weekly index 0–100</td><td>~0 weeks</td><td>Adjusts estimate (change only)</td></tr>
+    <tr><td>Google Trends: Influenza topic, all seven emirates in one comparison</td><td>Population behaviour</td><td>Emirate, weekly index on one shared scale</td><td>~0 weeks</td><td>“Where” panel only (not in the model, not validated against lab data)</td></tr>
+    <tr><td>Open-Meteo: temperature, humidity</td><td>Environmental</td><td>Abu Dhabi point, daily</td><td>~0 weeks</td><td>Context (tested, no added skill)</td></tr>
+    <tr><td>Open-Meteo / CAMS: PM10, dust</td><td>Environmental</td><td>Abu Dhabi point, hourly</td><td>~0 weeks</td><td>Context (tested, no added skill)</td></tr>`;
+  $("privacy").innerHTML = [
+    "No individual-level data is collected, stored or inferred. All inputs are published as aggregates by their owners.",
+    `Small-cell suppression: any week with fewer than ${S.small_cell} specimens has its positivity and counts hidden in the operations and community views. Weeks with fewer than ${S.min_spec} specimens are excluded from modelling.`,
+    "Role-based views: only surveillance officers see specimen counts, probabilities and model coefficients. The community view shows the alert level and advice only. In this prototype the role switch is client-side, to demonstrate the view policy; a pilot enforces it server-side with authenticated roles and serves each role only its own fields.",
+    "Search data is Google's anonymised, sampled, normalised index; no queries or users are visible.",
+    "Location: lab results exist only for the UAE as a whole. The emirate view is a search signal, labelled as such; emirates with zero search interest in more than 25% of weeks (Ajman, Ras Al Khaimah, Umm Al Quwain, Fujairah) are suppressed because their figures are too sparse to read.",
+    "Workplace and school extensions (absenteeism) would only be ingested as aggregated counts per site per week, above the small-cell threshold, never per person, and never used for attendance enforcement or disciplinary purposes.",
+    "Audit: every weekly snapshot is stored with its inputs and coefficients (dashboard/data.js), so any past alert can be reproduced.",
+  ].map(x => `<li>${x}</li>`).join("");
+  $("roleTable").innerHTML = `<tr><th>Element</th><th>Surveillance</th><th>Hospital ops</th><th>Community</th></tr>
+    ${[["Alert level & advice", "✓", "✓", "✓"], ["Estimated positivity & range", "✓", "✓", "–"], ["Signal contributions (pp)", "✓", "✓", "direction only"], ["Probability of crossing threshold", "✓", "–", "–"], ["Specimen counts", "✓", "–", "–"], ["Small-cell weeks", "flagged", "suppressed", "suppressed"], ["Model coefficients / refit size", "✓", "–", "–"]].map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}`;
+  $("intended").innerHTML = [
+    "Purpose: give public health and service managers earlier, explained notice of influenza waves so they can take proportionate, pre-planned actions.",
+    "Human in the loop: alerts are recommendations to a named role. The surveillance officer confirms before any public advisory is issued.",
+    "Never used to diagnose, triage or make decisions about individual patients, staff or students.",
+    "Fails safe: if search or weather feeds drop out, the system says so and falls back to lab + seasonal estimates (tested in the back-test). If lab data stops, it stops issuing estimates rather than guessing.",
+    "Monitoring: the back-test already checks calibration (see the calibration table). For a pilot (planned, not built yet): rerun that check every week on the last 3 months, alert the model owner on drift, and recalibrate each season.",
+    "Equity: national positivity can hide pockets of transmission. Labour accommodation and other under-tested groups need targeted outreach, not just this signal.",
+  ].map(x => `<li>${x}</li>`).join("");
+  const c = snaps[snaps.length - 1].coef;
+  $("modelCard").innerHTML = `<div class="grid g2"><div><h3>What it predicts</h3><p>This week's and next week's influenza test positivity in UAE sentinel surveillance (logit scale), and the probability that it is ≥ ${pct(S.threshold, 0)}.</p>
+    <h3>How</h3><p>Ridge regression on the <em>change</em> since the latest available lab week, so the model shrinks toward "no change" rather than toward the average. Inputs: latest lab level and momentum, seasonal harmonics (week of year), and the change in influenza search interest over the reporting gap (Abu Dhabi + UAE topics, 3-week average). Refit every week on all data available at that time; uncertainty comes from leave-one-out residuals.</p></div>
+    <div><h3>Current coefficients (standardised)</h3><table>${Object.entries(c).map(([k, v]) => `<tr><td>${{ ar1: "Latest lab level (mean reversion)", mom: "Lab momentum", sin: "Season (sin)", cos: "Season (cos)", ds_h: "Search change over gap" }[k] || k}</td><td>${v}</td></tr>`).join("")}</table>
+    <h3 style="margin-top:12px">Known limitations</h3><p>National lab signal only (no emirate-level ground truth: the emirate view is search interest, readable for Abu Dhabi, Dubai and Sharjah); 5 waves of evidence; influenza only (RSV / COVID-19 not modelled yet); Google Trends sampling noise in a small country.</p></div></div>`;
+}
+
+$("gen").textContent = "Generated " + D.generated + ".";
+// data freshness: which week the data reach, and whether any feed is later than its normal delay
+(function () {
+  const F = D.freshness;
+  if (!F) return;
+  const wks = (a, b) => (a && b) ? Math.round((new Date(a) - new Date(b)) / 6048e5) : null;
+  const labBehind = wks(F.as_of_week, F.lab_last_week), searchBehind = wks(F.as_of_week, F.search_last_week);
+  const late = [];
+  if (labBehind == null || labBehind > S.lab_lag_wk) late.push("lab");
+  if (searchBehind == null || searchBehind > 0) late.push("search");
+  const el = $("fresh");
+  el.textContent = `Data to week of ${fmtWk(F.as_of_week)} · lab reported to ${F.lab_last_week ? fmtWk(F.lab_last_week) : "n/a"}` +
+    ` · search to ${F.search_last_week ? fmtWk(F.search_last_week) : "n/a"} · refreshed weekly, last ${fmtWk(D.generated)}` +
+    (late.length ? ` · ${late.join(" and ")} feed late` : "");
+  el.classList.toggle("late", late.length > 0);
+})();
+
+// ---------- update check ----------
+// The page is static: new data come from the weekly refresh job, which publishes data.js + version.json.
+// An open page polls version.json (every 15 min while visible, and when the tab regains focus) and
+// offers to load the new data; "Check for new data" does the same on demand.
+(function () {
+  if (location.protocol === "file:") { $("chkWrap").hidden = true; return; }   // opened from disk: nothing to poll
+  const btn = $("chk"), msg = $("chkMsg");
+  const hhmm = () => new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  async function check(manual) {
+    if (manual) { btn.disabled = true; msg.textContent = "Checking…"; }
+    try {
+      const r = await fetch("version.json?t=" + Date.now(), { cache: "no-store" });
+      if (!r.ok) throw new Error(r.status);
+      const v = await r.json();
+      if (v.version && v.version !== D.version) {
+        $("updText").textContent = `New data published: week of ${fmtWk(v.as_of_week)}` +
+          (v.lab_last_week ? `, lab reported to ${fmtWk(v.lab_last_week)}.` : ".");
+        $("updBar").hidden = false;
+        msg.textContent = "";
+      } else {
+        msg.textContent = manual ? `Up to date · checked ${hhmm()}` : msg.textContent;
+      }
+    } catch (e) {
+      if (manual) msg.textContent = "Couldn't reach the server. Try again later.";
+    }
+    btn.disabled = false;
+  }
+  btn.onclick = () => check(true);
+  $("updGo").onclick = async () => {
+    $("updGo").disabled = true;
+    try { await fetch("data.js", { cache: "reload" }); } catch (e) { /* reload anyway */ }
+    location.reload();
+  };
+  setInterval(() => { if (!document.hidden) check(false); }, 15 * 60 * 1000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) check(false); });
+  check(false);
+})();
+// Deep link for demos, e.g. index.html#week=2023-09-18&hindsight=1&outage=1&role=ops&tab=backtest
+const H = new URLSearchParams(location.hash.slice(1));
+if (H.get("week")) { const i = snaps.findIndex(s => s.week >= H.get("week")); if (i >= 0) { cur = i; slider.value = i; } }
+if (H.get("role") in ROLE_NAMES) { role = H.get("role"); $("role").value = role; }
+if (H.get("hindsight") === "1") { hindsight = true; $("hindsight").checked = true; }
+if (H.get("outage") === "1") { outage = true; $("outage").checked = true; }
+render(); renderBacktest(); renderGovernance();
+if (H.get("tab")) { const b = document.querySelector(`nav.tabs button[data-tab="${H.get("tab")}"]`); if (b) b.click(); }
+window.addEventListener("hashchange", () => location.reload());
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2045 @@
+{
+  "settings": {
+    "threshold": 0.15,
+    "lab_lag_wk": 2,
+    "p_warning": 0.5,
+    "p_watch": 0.25,
+    "backtest_start": "2022-07-04",
+    "window_before_onset_wk": 6
+  },
+  "operating_point": {
+    "chosen_cut": 0.35,
+    "rule": "most timely cut-off with false alarms/yr <= lab-only rule",
+    "lab_only_false_alarms_per_year": 0.46,
+    "sweep": [
+      {
+        "cut": 0.2,
+        "waves_timely": 5,
+        "median_gain_vs_lab_wk": 6.0,
+        "false_alarms_per_year": 1.2,
+        "episode_ppv": 0.55,
+        "weekly_sensitivity": 1.0,
+        "weekly_ppv": 0.59
+      },
+      {
+        "cut": 0.25,
+        "waves_timely": 5,
+        "median_gain_vs_lab_wk": 5.0,
+        "false_alarms_per_year": 0.72,
+        "episode_ppv": 0.62,
+        "weekly_sensitivity": 0.98,
+        "weekly_ppv": 0.65
+      },
+      {
+        "cut": 0.3,
+        "waves_timely": 5,
+        "median_gain_vs_lab_wk": 5.0,
+        "false_alarms_per_year": 0.48,
+        "episode_ppv": 0.78,
+        "weekly_sensitivity": 0.97,
+        "weekly_ppv": 0.67
+      },
+      {
+        "cut": 0.35,
+        "waves_timely": 5,
+        "median_gain_vs_lab_wk": 5.0,
+        "false_alarms_per_year": 0.0,
+        "episode_ppv": 1.0,
+        "weekly_sensitivity": 0.95,
+        "weekly_ppv": 0.72
+      },
+      {
+        "cut": 0.4,
+        "waves_timely": 4,
+        "median_gain_vs_lab_wk": 3.0,
+        "false_alarms_per_year": 0.24,
+        "episode_ppv": 0.89,
+        "weekly_sensitivity": 0.92,
+        "weekly_ppv": 0.76
+      },
+      {
+        "cut": 0.45,
+        "waves_timely": 4,
+        "median_gain_vs_lab_wk": 3.0,
+        "false_alarms_per_year": 0.0,
+        "episode_ppv": 1.0,
+        "weekly_sensitivity": 0.89,
+        "weekly_ppv": 0.81
+      },
+      {
+        "cut": 0.5,
+        "waves_timely": 3,
+        "median_gain_vs_lab_wk": 1.0,
+        "false_alarms_per_year": 0.0,
+        "episode_ppv": 1.0,
+        "weekly_sensitivity": 0.84,
+        "weekly_ppv": 0.84
+      },
+      {
+        "cut": 0.6,
+        "waves_timely": 2,
+        "median_gain_vs_lab_wk": 0.0,
+        "false_alarms_per_year": 0.0,
+        "episode_ppv": 1.0,
+        "weekly_sensitivity": 0.71,
+        "weekly_ppv": 0.83
+      },
+      {
+        "cut": 0.7,
+        "waves_timely": 0,
+        "median_gain_vs_lab_wk": 0.0,
+        "false_alarms_per_year": 0.0,
+        "episode_ppv": 1.0,
+        "weekly_sensitivity": 0.55,
+        "weekly_ppv": 0.94
+      }
+    ]
+  },
+  "comparison": {
+    "Multi-signal nowcast (lab + season + search)": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 5.0,
+      "median_lead_vs_onset_wk": 3.0,
+      "alert_episodes": 9,
+      "true_episodes": 9,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 2.6,
+      "warning_weeks_per_year": 20.0,
+      "weekly_sensitivity": 0.95,
+      "weekly_ppv": 0.72,
+      "weekly_specificity": 0.82,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-09-12",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-09-18",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-23",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-03",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        }
+      ],
+      "nowcast_mae_pp": 3.57
+    },
+    "Same + weather + dust": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 3.0,
+      "median_lead_vs_onset_wk": 1.0,
+      "alert_episodes": 8,
+      "true_episodes": 7,
+      "episode_ppv": 0.88,
+      "false_alarms_per_year": 0.24,
+      "offwindow_warning_weeks_per_year": 2.9,
+      "warning_weeks_per_year": 20.2,
+      "weekly_sensitivity": 0.97,
+      "weekly_ppv": 0.72,
+      "weekly_specificity": 0.82,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-09-12",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-09-18",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-10-07",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-10",
+          "lead_vs_onset_wk": 0,
+          "gain_vs_lab_only_wk": 2,
+          "timely": true
+        }
+      ],
+      "nowcast_mae_pp": 3.75
+    },
+    "Lab + season only (no digital signals)": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 3.0,
+      "median_lead_vs_onset_wk": 1.0,
+      "alert_episodes": 6,
+      "true_episodes": 6,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 3.1,
+      "warning_weeks_per_year": 19.7,
+      "weekly_sensitivity": 0.95,
+      "weekly_ppv": 0.73,
+      "weekly_specificity": 0.83,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-10-10",
+          "lead_vs_onset_wk": 0,
+          "gain_vs_lab_only_wk": 2,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-09-25",
+          "lead_vs_onset_wk": 2,
+          "gain_vs_lab_only_wk": 4,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-30",
+          "lead_vs_onset_wk": 2,
+          "gain_vs_lab_only_wk": 4,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-03",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        }
+      ],
+      "nowcast_mae_pp": 4.03
+    },
+    "Lab + season + environment (no search)": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 4,
+      "median_gain_vs_lab_wk": 3.0,
+      "median_lead_vs_onset_wk": 1.0,
+      "alert_episodes": 6,
+      "true_episodes": 6,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 3.4,
+      "warning_weeks_per_year": 19.5,
+      "weekly_sensitivity": 0.95,
+      "weekly_ppv": 0.74,
+      "weekly_specificity": 0.84,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-09-12",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-10-09",
+          "lead_vs_onset_wk": 0,
+          "gain_vs_lab_only_wk": 2,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-30",
+          "lead_vs_onset_wk": 2,
+          "gain_vs_lab_only_wk": 4,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-24",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        }
+      ],
+      "nowcast_mae_pp": 4.17
+    },
+    "Lab-only threshold rule (current practice)": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 0,
+      "median_gain_vs_lab_wk": 0.0,
+      "median_lead_vs_onset_wk": -2.0,
+      "alert_episodes": 9,
+      "true_episodes": 7,
+      "episode_ppv": 0.78,
+      "false_alarms_per_year": 0.46,
+      "offwindow_warning_weeks_per_year": 2.3,
+      "warning_weeks_per_year": 14.5,
+      "weekly_sensitivity": 0.78,
+      "weekly_ppv": 0.79,
+      "weekly_specificity": 0.92,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-10-24",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-10-23",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-10-28",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-29",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-24",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        }
+      ],
+      "nowcast_mae_pp": 3.87
+    },
+    "Search-only anomaly (single signal, GFT-style)": {
+      "waves_scored": 5,
+      "waves_detected": 4,
+      "waves_timely": 1,
+      "median_gain_vs_lab_wk": -3.0,
+      "median_lead_vs_onset_wk": -5.0,
+      "alert_episodes": 4,
+      "true_episodes": 4,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 0.0,
+      "warning_weeks_per_year": 3.7,
+      "weekly_sensitivity": 0.24,
+      "weekly_ppv": 0.94,
+      "weekly_specificity": 0.99,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-10-10",
+          "lead_vs_onset_wk": 0,
+          "gain_vs_lab_only_wk": 2,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": null,
+          "lead_vs_onset_wk": null,
+          "gain_vs_lab_only_wk": null,
+          "timely": false
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2025-02-03",
+          "lead_vs_onset_wk": -16,
+          "gain_vs_lab_only_wk": -14,
+          "timely": false
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-10-13",
+          "lead_vs_onset_wk": -4,
+          "gain_vs_lab_only_wk": -2,
+          "timely": false
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-09-21",
+          "lead_vs_onset_wk": -6,
+          "gain_vs_lab_only_wk": -4,
+          "timely": false
+        }
+      ]
+    }
+  },
+  "simple_rules": {
+    "Lab-only rule, fires at 8%": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 6.0,
+      "median_lead_vs_onset_wk": 4.0,
+      "alert_episodes": 23,
+      "true_episodes": 9,
+      "episode_ppv": 0.39,
+      "false_alarms_per_year": 3.22,
+      "offwindow_warning_weeks_per_year": 14.5,
+      "warning_weeks_per_year": 32.4,
+      "weekly_sensitivity": 0.98,
+      "weekly_ppv": 0.44,
+      "weekly_specificity": 0.52,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-09-12",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-09-18",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-23",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-08-04",
+          "lead_vs_onset_wk": 6,
+          "gain_vs_lab_only_wk": 8,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-07-13",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        }
+      ],
+      "nowcast_mae_pp": 3.87
+    },
+    "Lab-only rule, fires at 10%": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 3.0,
+      "median_lead_vs_onset_wk": 1.0,
+      "alert_episodes": 17,
+      "true_episodes": 9,
+      "episode_ppv": 0.53,
+      "false_alarms_per_year": 1.84,
+      "offwindow_warning_weeks_per_year": 9.2,
+      "warning_weeks_per_year": 24.4,
+      "weekly_sensitivity": 0.94,
+      "weekly_ppv": 0.56,
+      "weekly_specificity": 0.72,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-10-10",
+          "lead_vs_onset_wk": 0,
+          "gain_vs_lab_only_wk": 2,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-10-16",
+          "lead_vs_onset_wk": -1,
+          "gain_vs_lab_only_wk": 1,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-10-07",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-07-13",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        }
+      ],
+      "nowcast_mae_pp": 3.87
+    },
+    "Lab-only rule, fires at 12%": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 1.0,
+      "median_lead_vs_onset_wk": -1.0,
+      "alert_episodes": 17,
+      "true_episodes": 8,
+      "episode_ppv": 0.47,
+      "false_alarms_per_year": 2.07,
+      "offwindow_warning_weeks_per_year": 6.0,
+      "warning_weeks_per_year": 19.8,
+      "weekly_sensitivity": 0.86,
+      "weekly_ppv": 0.64,
+      "weekly_specificity": 0.81,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-10-17",
+          "lead_vs_onset_wk": -1,
+          "gain_vs_lab_only_wk": 1,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-10-16",
+          "lead_vs_onset_wk": -1,
+          "gain_vs_lab_only_wk": 1,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-10-21",
+          "lead_vs_onset_wk": -1,
+          "gain_vs_lab_only_wk": 1,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-03",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        }
+      ],
+      "nowcast_mae_pp": 3.87
+    },
+    "Lab-only rule, fires at 15%": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 0,
+      "median_gain_vs_lab_wk": 0.0,
+      "median_lead_vs_onset_wk": -2.0,
+      "alert_episodes": 9,
+      "true_episodes": 7,
+      "episode_ppv": 0.78,
+      "false_alarms_per_year": 0.46,
+      "offwindow_warning_weeks_per_year": 2.3,
+      "warning_weeks_per_year": 14.5,
+      "weekly_sensitivity": 0.78,
+      "weekly_ppv": 0.79,
+      "weekly_specificity": 0.92,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-10-24",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-10-23",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-10-28",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-29",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-24",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        }
+      ],
+      "nowcast_mae_pp": 3.87
+    },
+    "Calendar rule, ISO wk 32-43 every year": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 8.0,
+      "median_lead_vs_onset_wk": 6.0,
+      "alert_episodes": 5,
+      "true_episodes": 5,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 2.3,
+      "warning_weeks_per_year": 13.8,
+      "weekly_sensitivity": 0.4,
+      "weekly_ppv": 0.42,
+      "weekly_specificity": 0.79,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-08-29",
+          "lead_vs_onset_wk": 6,
+          "gain_vs_lab_only_wk": 8,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-08-28",
+          "lead_vs_onset_wk": 6,
+          "gain_vs_lab_only_wk": 8,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-02",
+          "lead_vs_onset_wk": 6,
+          "gain_vs_lab_only_wk": 8,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-08-04",
+          "lead_vs_onset_wk": 6,
+          "gain_vs_lab_only_wk": 8,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-03",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        }
+      ]
+    },
+    "Calendar rule, ISO wk 34-45 every year": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 8.0,
+      "median_lead_vs_onset_wk": 6.0,
+      "alert_episodes": 5,
+      "true_episodes": 5,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 0.9,
+      "warning_weeks_per_year": 13.8,
+      "weekly_sensitivity": 0.54,
+      "weekly_ppv": 0.57,
+      "weekly_specificity": 0.84,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-08-29",
+          "lead_vs_onset_wk": 6,
+          "gain_vs_lab_only_wk": 8,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-08-28",
+          "lead_vs_onset_wk": 6,
+          "gain_vs_lab_only_wk": 8,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-02",
+          "lead_vs_onset_wk": 6,
+          "gain_vs_lab_only_wk": 8,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-08-18",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-17",
+          "lead_vs_onset_wk": -1,
+          "gain_vs_lab_only_wk": 1,
+          "timely": true
+        }
+      ]
+    },
+    "Calendar rule, ISO wk 36-47 every year": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 4,
+      "median_gain_vs_lab_wk": 7.0,
+      "median_lead_vs_onset_wk": 5.0,
+      "alert_episodes": 5,
+      "true_episodes": 5,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 0.0,
+      "warning_weeks_per_year": 13.6,
+      "weekly_sensitivity": 0.63,
+      "weekly_ppv": 0.69,
+      "weekly_specificity": 0.89,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-09-05",
+          "lead_vs_onset_wk": 5,
+          "gain_vs_lab_only_wk": 7,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-09-04",
+          "lead_vs_onset_wk": 5,
+          "gain_vs_lab_only_wk": 7,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-02",
+          "lead_vs_onset_wk": 6,
+          "gain_vs_lab_only_wk": 8,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-01",
+          "lead_vs_onset_wk": 2,
+          "gain_vs_lab_only_wk": 4,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-31",
+          "lead_vs_onset_wk": -3,
+          "gain_vs_lab_only_wk": -1,
+          "timely": false
+        }
+      ]
+    },
+    "Calendar rule, ISO wk 38-49 every year": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 4,
+      "median_gain_vs_lab_wk": 5.0,
+      "median_lead_vs_onset_wk": 3.0,
+      "alert_episodes": 5,
+      "true_episodes": 5,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 0.2,
+      "warning_weeks_per_year": 13.1,
+      "weekly_sensitivity": 0.7,
+      "weekly_ppv": 0.79,
+      "weekly_specificity": 0.93,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-09-19",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-09-18",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-16",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-15",
+          "lead_vs_onset_wk": 0,
+          "gain_vs_lab_only_wk": 2,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-09-14",
+          "lead_vs_onset_wk": -5,
+          "gain_vs_lab_only_wk": -3,
+          "timely": false
+        }
+      ]
+    },
+    "Lab + season model, P>=0.35": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 3.0,
+      "median_lead_vs_onset_wk": 1.0,
+      "alert_episodes": 6,
+      "true_episodes": 6,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 3.1,
+      "warning_weeks_per_year": 19.7,
+      "weekly_sensitivity": 0.95,
+      "weekly_ppv": 0.73,
+      "weekly_specificity": 0.83,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-10-10",
+          "lead_vs_onset_wk": 0,
+          "gain_vs_lab_only_wk": 2,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-09-25",
+          "lead_vs_onset_wk": 2,
+          "gain_vs_lab_only_wk": 4,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-30",
+          "lead_vs_onset_wk": 2,
+          "gain_vs_lab_only_wk": 4,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-03",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        }
+      ],
+      "nowcast_mae_pp": 4.03
+    },
+    "Multi-signal model, P>=0.35": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 5.0,
+      "median_lead_vs_onset_wk": 3.0,
+      "alert_episodes": 9,
+      "true_episodes": 9,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 2.6,
+      "warning_weeks_per_year": 20.0,
+      "weekly_sensitivity": 0.95,
+      "weekly_ppv": 0.72,
+      "weekly_specificity": 0.82,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-09-12",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-09-18",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-23",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-03",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        }
+      ],
+      "nowcast_mae_pp": 3.57
+    },
+    "Lab + season model, P>=0.5": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 3,
+      "median_gain_vs_lab_wk": 1.0,
+      "median_lead_vs_onset_wk": -1.0,
+      "alert_episodes": 7,
+      "true_episodes": 7,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 1.9,
+      "warning_weeks_per_year": 14.4,
+      "weekly_sensitivity": 0.76,
+      "weekly_ppv": 0.8,
+      "weekly_specificity": 0.91,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-10-24",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-10-16",
+          "lead_vs_onset_wk": -1,
+          "gain_vs_lab_only_wk": 1,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-10-21",
+          "lead_vs_onset_wk": -1,
+          "gain_vs_lab_only_wk": 1,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-24",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        }
+      ],
+      "nowcast_mae_pp": 4.03
+    },
+    "Multi-signal model, P>=0.5": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 3,
+      "median_gain_vs_lab_wk": 1.0,
+      "median_lead_vs_onset_wk": -1.0,
+      "alert_episodes": 6,
+      "true_episodes": 6,
+      "episode_ppv": 1.0,
+      "false_alarms_per_year": 0.0,
+      "offwindow_warning_weeks_per_year": 1.4,
+      "warning_weeks_per_year": 15.1,
+      "weekly_sensitivity": 0.84,
+      "weekly_ppv": 0.84,
+      "weekly_specificity": 0.92,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-10-17",
+          "lead_vs_onset_wk": -1,
+          "gain_vs_lab_only_wk": 1,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-10-23",
+          "lead_vs_onset_wk": -2,
+          "gain_vs_lab_only_wk": 0,
+          "timely": false
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-10-21",
+          "lead_vs_onset_wk": -1,
+          "gain_vs_lab_only_wk": 1,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-31",
+          "lead_vs_onset_wk": -3,
+          "gain_vs_lab_only_wk": -1,
+          "timely": false
+        }
+      ],
+      "nowcast_mae_pp": 3.57
+    }
+  },
+  "reliability": [
+    {
+      "bin": "(-0.001, 0.1]",
+      "n": 60,
+      "mean_p": 0.04,
+      "observed": 0.0
+    },
+    {
+      "bin": "(0.1, 0.3]",
+      "n": 49,
+      "mean_p": 0.18,
+      "observed": 0.04
+    },
+    {
+      "bin": "(0.3, 0.5]",
+      "n": 23,
+      "mean_p": 0.39,
+      "observed": 0.39
+    },
+    {
+      "bin": "(0.5, 0.7]",
+      "n": 27,
+      "mean_p": 0.61,
+      "observed": 0.74
+    },
+    {
+      "bin": "(0.7, 0.9]",
+      "n": 19,
+      "mean_p": 0.79,
+      "observed": 0.89
+    },
+    {
+      "bin": "(0.9, 1.0]",
+      "n": 14,
+      "mean_p": 0.96,
+      "observed": 1.0
+    }
+  ],
+  "brier": 0.084,
+  "latency": {
+    "lag 1 wk": {
+      "multi_signal": {
+        "waves_scored": 5,
+        "waves_detected": 5,
+        "waves_timely": 5,
+        "median_gain_vs_lab_wk": 3.0,
+        "median_lead_vs_onset_wk": 2.0,
+        "alert_episodes": 9,
+        "true_episodes": 7,
+        "episode_ppv": 0.78,
+        "false_alarms_per_year": 0.47,
+        "offwindow_warning_weeks_per_year": 2.4,
+        "warning_weeks_per_year": 19.9,
+        "weekly_sensitivity": 0.97,
+        "weekly_ppv": 0.72,
+        "weekly_specificity": 0.83,
+        "per_wave": [
+          {
+            "onset": "2022-10-10",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-09-05",
+            "lead_vs_onset_wk": 5,
+            "gain_vs_lab_only_wk": 6,
+            "timely": true
+          },
+          {
+            "onset": "2023-10-09",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-09-18",
+            "lead_vs_onset_wk": 3,
+            "gain_vs_lab_only_wk": 4,
+            "timely": true
+          },
+          {
+            "onset": "2024-10-14",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-10-07",
+            "lead_vs_onset_wk": 1,
+            "gain_vs_lab_only_wk": 2,
+            "timely": true
+          },
+          {
+            "onset": "2025-09-15",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-09-01",
+            "lead_vs_onset_wk": 2,
+            "gain_vs_lab_only_wk": 3,
+            "timely": true
+          },
+          {
+            "onset": "2026-08-10",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-08-03",
+            "lead_vs_onset_wk": 1,
+            "gain_vs_lab_only_wk": 2,
+            "timely": true
+          }
+        ],
+        "nowcast_mae_pp": 3.17
+      },
+      "lab_only_rule": {
+        "waves_scored": 5,
+        "waves_detected": 5,
+        "waves_timely": 0,
+        "median_gain_vs_lab_wk": 0.0,
+        "median_lead_vs_onset_wk": -1.0,
+        "alert_episodes": 9,
+        "true_episodes": 8,
+        "episode_ppv": 0.89,
+        "false_alarms_per_year": 0.23,
+        "offwindow_warning_weeks_per_year": 1.4,
+        "warning_weeks_per_year": 14.7,
+        "weekly_sensitivity": 0.87,
+        "weekly_ppv": 0.87,
+        "weekly_specificity": 0.95,
+        "per_wave": [
+          {
+            "onset": "2022-10-10",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-10-17",
+            "lead_vs_onset_wk": -1,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2023-10-09",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-10-16",
+            "lead_vs_onset_wk": -1,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2024-10-14",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-10-21",
+            "lead_vs_onset_wk": -1,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2025-09-15",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-09-22",
+            "lead_vs_onset_wk": -1,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2026-08-10",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-08-17",
+            "lead_vs_onset_wk": -1,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          }
+        ],
+        "nowcast_mae_pp": 2.74
+      }
+    },
+    "lag 2 wk": {
+      "multi_signal": {
+        "waves_scored": 5,
+        "waves_detected": 5,
+        "waves_timely": 5,
+        "median_gain_vs_lab_wk": 5.0,
+        "median_lead_vs_onset_wk": 3.0,
+        "alert_episodes": 9,
+        "true_episodes": 9,
+        "episode_ppv": 1.0,
+        "false_alarms_per_year": 0.0,
+        "offwindow_warning_weeks_per_year": 2.6,
+        "warning_weeks_per_year": 20.0,
+        "weekly_sensitivity": 0.95,
+        "weekly_ppv": 0.72,
+        "weekly_specificity": 0.82,
+        "per_wave": [
+          {
+            "onset": "2022-10-10",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-09-12",
+            "lead_vs_onset_wk": 4,
+            "gain_vs_lab_only_wk": 6,
+            "timely": true
+          },
+          {
+            "onset": "2023-10-09",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-09-18",
+            "lead_vs_onset_wk": 3,
+            "gain_vs_lab_only_wk": 5,
+            "timely": true
+          },
+          {
+            "onset": "2024-10-14",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-09-23",
+            "lead_vs_onset_wk": 3,
+            "gain_vs_lab_only_wk": 5,
+            "timely": true
+          },
+          {
+            "onset": "2025-09-15",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-09-08",
+            "lead_vs_onset_wk": 1,
+            "gain_vs_lab_only_wk": 3,
+            "timely": true
+          },
+          {
+            "onset": "2026-08-10",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-08-03",
+            "lead_vs_onset_wk": 1,
+            "gain_vs_lab_only_wk": 3,
+            "timely": true
+          }
+        ],
+        "nowcast_mae_pp": 3.57
+      },
+      "lab_only_rule": {
+        "waves_scored": 5,
+        "waves_detected": 5,
+        "waves_timely": 0,
+        "median_gain_vs_lab_wk": 0.0,
+        "median_lead_vs_onset_wk": -2.0,
+        "alert_episodes": 9,
+        "true_episodes": 7,
+        "episode_ppv": 0.78,
+        "false_alarms_per_year": 0.46,
+        "offwindow_warning_weeks_per_year": 2.3,
+        "warning_weeks_per_year": 14.5,
+        "weekly_sensitivity": 0.78,
+        "weekly_ppv": 0.79,
+        "weekly_specificity": 0.92,
+        "per_wave": [
+          {
+            "onset": "2022-10-10",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-10-24",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2023-10-09",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-10-23",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2024-10-14",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-10-28",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2025-09-15",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-09-29",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2026-08-10",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-08-24",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          }
+        ],
+        "nowcast_mae_pp": 3.87
+      }
+    },
+    "lag 3 wk": {
+      "multi_signal": {
+        "waves_scored": 5,
+        "waves_detected": 5,
+        "waves_timely": 5,
+        "median_gain_vs_lab_wk": 5.0,
+        "median_lead_vs_onset_wk": 2.0,
+        "alert_episodes": 9,
+        "true_episodes": 9,
+        "episode_ppv": 1.0,
+        "false_alarms_per_year": 0.0,
+        "offwindow_warning_weeks_per_year": 3.2,
+        "warning_weeks_per_year": 20.6,
+        "weekly_sensitivity": 0.92,
+        "weekly_ppv": 0.68,
+        "weekly_specificity": 0.79,
+        "per_wave": [
+          {
+            "onset": "2022-10-10",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-09-26",
+            "lead_vs_onset_wk": 2,
+            "gain_vs_lab_only_wk": 5,
+            "timely": true
+          },
+          {
+            "onset": "2023-10-09",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-09-18",
+            "lead_vs_onset_wk": 3,
+            "gain_vs_lab_only_wk": 6,
+            "timely": true
+          },
+          {
+            "onset": "2024-10-14",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-09-02",
+            "lead_vs_onset_wk": 6,
+            "gain_vs_lab_only_wk": 9,
+            "timely": true
+          },
+          {
+            "onset": "2025-09-15",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-09-08",
+            "lead_vs_onset_wk": 1,
+            "gain_vs_lab_only_wk": 4,
+            "timely": true
+          },
+          {
+            "onset": "2026-08-10",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-08-17",
+            "lead_vs_onset_wk": -1,
+            "gain_vs_lab_only_wk": 2,
+            "timely": true
+          }
+        ],
+        "nowcast_mae_pp": 3.68
+      },
+      "lab_only_rule": {
+        "waves_scored": 5,
+        "waves_detected": 5,
+        "waves_timely": 0,
+        "median_gain_vs_lab_wk": 0.0,
+        "median_lead_vs_onset_wk": -3.0,
+        "alert_episodes": 10,
+        "true_episodes": 7,
+        "episode_ppv": 0.7,
+        "false_alarms_per_year": 0.69,
+        "offwindow_warning_weeks_per_year": 3.2,
+        "warning_weeks_per_year": 14.5,
+        "weekly_sensitivity": 0.71,
+        "weekly_ppv": 0.73,
+        "weekly_specificity": 0.9,
+        "per_wave": [
+          {
+            "onset": "2022-10-10",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-10-31",
+            "lead_vs_onset_wk": -3,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2023-10-09",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-10-30",
+            "lead_vs_onset_wk": -3,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2024-10-14",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-11-04",
+            "lead_vs_onset_wk": -3,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2025-09-15",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-10-06",
+            "lead_vs_onset_wk": -3,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2026-08-10",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-08-31",
+            "lead_vs_onset_wk": -3,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          }
+        ],
+        "nowcast_mae_pp": 4.88
+      }
+    }
+  },
+  "missing_inputs": {
+    "search missing in 30% of weeks (random)": {
+      "waves_scored": 5,
+      "waves_detected": 5,
+      "waves_timely": 5,
+      "median_gain_vs_lab_wk": 4.0,
+      "median_lead_vs_onset_wk": 2.0,
+      "alert_episodes": 9,
+      "true_episodes": 8,
+      "episode_ppv": 0.89,
+      "false_alarms_per_year": 0.24,
+      "offwindow_warning_weeks_per_year": 2.6,
+      "warning_weeks_per_year": 20.2,
+      "weekly_sensitivity": 0.95,
+      "weekly_ppv": 0.71,
+      "weekly_specificity": 0.82,
+      "per_wave": [
+        {
+          "onset": "2022-10-10",
+          "peak_week": "2022-11-07",
+          "peak_rate": 0.356,
+          "first_warning": "2022-09-12",
+          "lead_vs_onset_wk": 4,
+          "gain_vs_lab_only_wk": 6,
+          "timely": true
+        },
+        {
+          "onset": "2023-10-09",
+          "peak_week": "2023-11-06",
+          "peak_rate": 0.273,
+          "first_warning": "2023-09-25",
+          "lead_vs_onset_wk": 2,
+          "gain_vs_lab_only_wk": 4,
+          "timely": true
+        },
+        {
+          "onset": "2024-10-14",
+          "peak_week": "2025-02-10",
+          "peak_rate": 0.28,
+          "first_warning": "2024-09-23",
+          "lead_vs_onset_wk": 3,
+          "gain_vs_lab_only_wk": 5,
+          "timely": true
+        },
+        {
+          "onset": "2025-09-15",
+          "peak_week": "2025-10-13",
+          "peak_rate": 0.406,
+          "first_warning": "2025-09-08",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        },
+        {
+          "onset": "2026-08-10",
+          "peak_week": "2026-09-28",
+          "peak_rate": 0.401,
+          "first_warning": "2026-08-03",
+          "lead_vs_onset_wk": 1,
+          "gain_vs_lab_only_wk": 3,
+          "timely": true
+        }
+      ],
+      "nowcast_mae_pp": 3.91,
+      "degraded_weeks": 92
+    }
+  },
+  "threshold_sensitivity": {
+    "threshold 12%": {
+      "multi_signal": {
+        "waves_scored": 6,
+        "waves_detected": 6,
+        "waves_timely": 6,
+        "median_gain_vs_lab_wk": 7.0,
+        "median_lead_vs_onset_wk": 5.0,
+        "alert_episodes": 12,
+        "true_episodes": 9,
+        "episode_ppv": 0.75,
+        "false_alarms_per_year": 0.72,
+        "offwindow_warning_weeks_per_year": 2.2,
+        "warning_weeks_per_year": 26.2,
+        "weekly_sensitivity": 0.94,
+        "weekly_ppv": 0.71,
+        "weekly_specificity": 0.72,
+        "per_wave": [
+          {
+            "onset": "2022-10-03",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-09-12",
+            "lead_vs_onset_wk": 3,
+            "gain_vs_lab_only_wk": 5,
+            "timely": true
+          },
+          {
+            "onset": "2023-10-02",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-08-21",
+            "lead_vs_onset_wk": 6,
+            "gain_vs_lab_only_wk": 8,
+            "timely": true
+          },
+          {
+            "onset": "2024-10-07",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-08-26",
+            "lead_vs_onset_wk": 6,
+            "gain_vs_lab_only_wk": 8,
+            "timely": true
+          },
+          {
+            "onset": "2025-09-15",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-09-01",
+            "lead_vs_onset_wk": 2,
+            "gain_vs_lab_only_wk": 4,
+            "timely": true
+          },
+          {
+            "onset": "2026-02-09",
+            "peak_week": "2026-02-09",
+            "peak_rate": 0.154,
+            "first_warning": "2025-12-29",
+            "lead_vs_onset_wk": 6,
+            "gain_vs_lab_only_wk": 8,
+            "timely": true
+          },
+          {
+            "onset": "2026-08-10",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-07-13",
+            "lead_vs_onset_wk": 4,
+            "gain_vs_lab_only_wk": 6,
+            "timely": true
+          }
+        ],
+        "nowcast_mae_pp": 3.57
+      },
+      "lab_only_rule": {
+        "waves_scored": 6,
+        "waves_detected": 6,
+        "waves_timely": 3,
+        "median_gain_vs_lab_wk": 1.5,
+        "median_lead_vs_onset_wk": -0.5,
+        "alert_episodes": 17,
+        "true_episodes": 13,
+        "episode_ppv": 0.76,
+        "false_alarms_per_year": 0.92,
+        "offwindow_warning_weeks_per_year": 2.3,
+        "warning_weeks_per_year": 19.8,
+        "weekly_sensitivity": 0.77,
+        "weekly_ppv": 0.79,
+        "weekly_specificity": 0.87,
+        "per_wave": [
+          {
+            "onset": "2022-10-03",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-10-17",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2023-10-02",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-10-16",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2024-10-07",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-10-21",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2025-09-15",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-09-08",
+            "lead_vs_onset_wk": 1,
+            "gain_vs_lab_only_wk": 3,
+            "timely": true
+          },
+          {
+            "onset": "2026-02-09",
+            "peak_week": "2026-02-09",
+            "peak_rate": 0.154,
+            "first_warning": "2025-12-29",
+            "lead_vs_onset_wk": 6,
+            "gain_vs_lab_only_wk": 8,
+            "timely": true
+          },
+          {
+            "onset": "2026-08-10",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-08-03",
+            "lead_vs_onset_wk": 1,
+            "gain_vs_lab_only_wk": 3,
+            "timely": true
+          }
+        ],
+        "nowcast_mae_pp": 3.87
+      }
+    },
+    "threshold 18%": {
+      "multi_signal": {
+        "waves_scored": 6,
+        "waves_detected": 6,
+        "waves_timely": 5,
+        "median_gain_vs_lab_wk": 4.0,
+        "median_lead_vs_onset_wk": 2.0,
+        "alert_episodes": 8,
+        "true_episodes": 8,
+        "episode_ppv": 1.0,
+        "false_alarms_per_year": 0.0,
+        "offwindow_warning_weeks_per_year": 2.4,
+        "warning_weeks_per_year": 16.4,
+        "weekly_sensitivity": 0.92,
+        "weekly_ppv": 0.73,
+        "weekly_specificity": 0.87,
+        "per_wave": [
+          {
+            "onset": "2022-10-10",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-09-12",
+            "lead_vs_onset_wk": 4,
+            "gain_vs_lab_only_wk": 6,
+            "timely": true
+          },
+          {
+            "onset": "2023-10-09",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-09-25",
+            "lead_vs_onset_wk": 2,
+            "gain_vs_lab_only_wk": 4,
+            "timely": true
+          },
+          {
+            "onset": "2024-10-21",
+            "peak_week": "2024-12-09",
+            "peak_rate": 0.236,
+            "first_warning": "2024-10-21",
+            "lead_vs_onset_wk": 0,
+            "gain_vs_lab_only_wk": 2,
+            "timely": true
+          },
+          {
+            "onset": "2025-01-27",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-12-16",
+            "lead_vs_onset_wk": 6,
+            "gain_vs_lab_only_wk": 8,
+            "timely": true
+          },
+          {
+            "onset": "2025-09-22",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-09-08",
+            "lead_vs_onset_wk": 2,
+            "gain_vs_lab_only_wk": 4,
+            "timely": true
+          },
+          {
+            "onset": "2026-08-17",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-08-31",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          }
+        ],
+        "nowcast_mae_pp": 3.57
+      },
+      "lab_only_rule": {
+        "waves_scored": 6,
+        "waves_detected": 6,
+        "waves_timely": 1,
+        "median_gain_vs_lab_wk": 0.0,
+        "median_lead_vs_onset_wk": -2.0,
+        "alert_episodes": 9,
+        "true_episodes": 9,
+        "episode_ppv": 1.0,
+        "false_alarms_per_year": 0.0,
+        "offwindow_warning_weeks_per_year": 2.3,
+        "warning_weeks_per_year": 12.4,
+        "weekly_sensitivity": 0.76,
+        "weekly_ppv": 0.77,
+        "weekly_specificity": 0.93,
+        "per_wave": [
+          {
+            "onset": "2022-10-10",
+            "peak_week": "2022-11-07",
+            "peak_rate": 0.356,
+            "first_warning": "2022-10-24",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2023-10-09",
+            "peak_week": "2023-11-06",
+            "peak_rate": 0.273,
+            "first_warning": "2023-10-23",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2024-10-21",
+            "peak_week": "2024-12-09",
+            "peak_rate": 0.236,
+            "first_warning": "2024-11-04",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2025-01-27",
+            "peak_week": "2025-02-10",
+            "peak_rate": 0.28,
+            "first_warning": "2024-12-16",
+            "lead_vs_onset_wk": 6,
+            "gain_vs_lab_only_wk": 8,
+            "timely": true
+          },
+          {
+            "onset": "2025-09-22",
+            "peak_week": "2025-10-13",
+            "peak_rate": 0.406,
+            "first_warning": "2025-10-06",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          },
+          {
+            "onset": "2026-08-17",
+            "peak_week": "2026-09-28",
+            "peak_rate": 0.401,
+            "first_warning": "2026-08-31",
+            "lead_vs_onset_wk": -2,
+            "gain_vs_lab_only_wk": 0,
+            "timely": false
+          }
+        ],
+        "nowcast_mae_pp": 3.87
+      }
+    }
+  }
+}

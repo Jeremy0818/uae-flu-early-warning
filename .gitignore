@@ -1,0 +1,8 @@
+# rollback copies kept by the fetch/import scripts, and the refresh staging area
+*.prev.*
+outputs/staging/
+data/raw/**/*.tmp
+__pycache__/
+.firebase/
+# local editor / assistant settings (machine-specific paths)
+.claude/
