@@ -8,6 +8,8 @@ An explainable influenza early-warning system. Every week it estimates the *curr
 
 **Live demo:** https://uae-flu-ewarn.web.app (public, Firebase Hosting; data refreshed weekly)
 
+**Code:** https://github.com/Jeremy0818/uae-flu-early-warning
+
 ## Why it works: the honest version
 
 Lab-confirmed surveillance (WHO FluNet) reaches decision makers about 2 weeks after specimens are taken. Search interest in influenza moves **at the same time** as infections, not before them (lag analysis: r ≈ 0.78 on levels, peaking at lag 0). Its *changes* still add real information on top of lab data (r ≈ 0.33 on 2-week changes). So the system **closes the reporting gap**; it does not predict the future from searches.
